@@ -1,0 +1,132 @@
+@import "tailwindcss";
+@plugin "daisyui";
+
+@font-face {
+  font-family: "CoreSans";
+  src: url("../public/fonts/CoreSans.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+}
+
+:root,
+[data-theme] {
+  background: oklch(var(--b2));
+}
+
+:root {
+  --darkPurpl: #291c66;
+  --skyBlue: #0399b5;
+  --navyBlue: #053672;
+  --vividPurple: #9e14a6;
+  --hotPink: #fc24a2;
+  --aquaBlue: #0091ab;
+  --turquoise: #00cdcc;
+  --goldYellow: #fecb02;
+  --pinkRose: #ee2f93;
+  --purpleRoyal: #711da5;
+  --container-width: 75rem;
+  --container-padding-x: 1rem;
+}
+@media (width <= 90.06125rem) {
+  :root {
+    --container-width: 80rem;
+  }
+}
+
+@theme inline {
+  --color-darkPurpl: var(--darkPurpl);
+  --color-skyBlue: var(--skyBlue);
+  --color-navyBlue: var(--navyBlue);
+  --color-vividPurple: var(--vividPurple);
+  --color-hotPink: var(--hotPink);
+  --color-aquaBlue: var(--aquaBlue);
+  --color-turquoise: var(--turquoise);
+  --color-goldYellow: var(--goldYellow);
+  --color-pinkRose: var(--pinkRose);
+  --color-purpleRoyal: var(--purpleRoyal);
+
+  --my-shadow: 0 6px 0px rgba(9, 37, 90, 1);
+  --timer-shadow: 0 6px 0px rgba(0, 0, 0, 1);
+  --long-button-shadow: 0 6px 0px rgba(109, 13, 143, 1);
+  --short-button-shadow: 0 6px 0px rgba(0, 103, 141, 1);
+  --bet-button-shadow: 0 6px 0px rgba(73, 22, 133, 1);
+  --neon-box-shadow: 0 0 20px rgba(255, 0, 255, 0.3);
+
+  --animate-move-road: move-road 5s linear infinite;
+  --animate-rotate-wheel: rotate-wheel 0.5s linear infinite;
+}
+
+body {
+  min-height: 100vh;
+  font-family: "CoreSans", sans-serif;
+  background: #1c123f;
+  background-image: url("/images/bg.png");
+  background-size: cover;
+  background-position: center;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  margin-bottom: 0.5rem;
+  line-height: 1;
+}
+
+p {
+  margin: 1rem 0;
+}
+
+.button {
+  @apply outline-none border-[5px] border-solid border-skyBlue bg-navyBlue px-7 py-3 rounded-[50px] flex flex-row items-center gap-1 cursor-pointer uppercase transition-all duration-300 hover:shadow-(--my-shadow) hover:scale-95;
+}
+
+.box {
+  background: linear-gradient(135deg, #1a1a2e, #16213e);
+  border-radius: 20px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #291c66;
+}
+
+.btn.btn-ghost {
+}
+
+@keyframes rotate-wheel {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes move-road {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-868px);
+  }
+}
+
+@utility container {
+  max-width: calc(var(--container-width) + var(--container-padding-x) * 2);
+  margin-inline: auto;
+  padding-inline: var(--container-padding-x);
+  @media (width <= 63.99875rem) {
+    .container {
+      max-width: calc(60rem + var(--container-padding-x) * 2);
+    }
+  }
+  @media (width <= 47.99875rem) {
+    .container {
+      max-width: calc(45rem + var(--container-padding-x) * 2);
+    }
+  }
+  @media (width <= 30.06125rem) {
+    .container {
+      max-width: calc(33.75rem + var(--container-padding-x) * 2);
+    }
+  }
+}

@@ -44,8 +44,6 @@ type GameHubEventHandlers = {
 class GameHubService {
   private connection: HubConnection | null = null;
   private eventHandlers: GameHubEventHandlers = {};
-  private reconnectAttempts = 0;
-  private maxReconnectAttempts = 5;
   private hubUrl = process.env.NEXT_PUBLIC_SIGNALR_URL || "http://localhost:5080/gamehub";
 
   public async connect(handlers: GameHubEventHandlers): Promise<void> {
@@ -63,18 +61,9 @@ class GameHubService {
     try {
       await this.connection.start();
       toast.success("Подключено к серверу! 🚀");
-      this.reconnectAttempts = 0;
     } catch (error) {
       console.error("Failed to connect to GameHub:", error);
-      toast.error("Не удалось подключиться к серверу.");
-      this.reconnectAttempts++;
-
-      if (this.reconnectAttempts < this.maxReconnectAttempts) {
-        toast("Повторное подключение... 🔄");
-        setTimeout(() => this.connect(handlers), 2000);
-      } else {
-        toast.error("Не удалось установить соединение после нескольких попыток.");
-      }
+      setTimeout(() => this.connect(handlers), 2000);
     }
   }
   //в цикл засунуть эти conection и написать функцию которая будет помагать

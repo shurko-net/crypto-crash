@@ -75,6 +75,12 @@ export const CarRace = ({
 
       if (deltaTime > 16) {
         const containerWidth = containerRef.current?.clientWidth || 0;
+        const longCarWidth = longCarRef.current?.offsetWidth || 0;
+        const shortCarWidth = shortCarRef.current?.offsetWidth || 0;
+
+        const maxXLong = containerWidth - longCarWidth;
+        const maxXShort = containerWidth - shortCarWidth;
+
         const targetLongX = (containerWidth * longCarX) / 100;
         const targetShortX = (containerWidth * shortCarX) / 100;
 
@@ -82,6 +88,10 @@ export const CarRace = ({
 
         longCarPositionRef.current += (targetLongX - longCarPositionRef.current) * smoothFactor;
         shortCarPositionRef.current += (targetShortX - shortCarPositionRef.current) * smoothFactor;
+
+        // Обмеження по межах дороги
+        longCarPositionRef.current = Math.max(0, Math.min(maxXLong, longCarPositionRef.current));
+        shortCarPositionRef.current = Math.max(0, Math.min(maxXShort, shortCarPositionRef.current));
 
         if (longCarRef.current) {
           longCarRef.current.style.transform = `translateX(${longCarPositionRef.current}px)`;

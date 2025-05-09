@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import { formatEther } from "viem";
 import { useAccount } from "wagmi";
@@ -23,14 +23,13 @@ export default function Input({ onChange, disabled, value: externalValue }: Inpu
   const formattedBalance = balance ? Number(formatEther(balance.value)) : 0;
   const [inputValue, setInputValue] = useState("");
 
-  // Sync input value with external value
-  useEffect(() => {
-    if (externalValue === 0 && inputValue !== "") {
-      setInputValue("");
-    } else if (externalValue > 0 && externalValue.toString() !== inputValue) {
-      setInputValue(externalValue.toString());
-    }
-  }, [externalValue, inputValue]);
+  // useEffect(() => {
+  //   if (externalValue === 0 && inputValue !== "") {
+  //     setInputValue("");
+  //   } else if (externalValue > 0 && externalValue.toString() !== inputValue) {
+  //     setInputValue(externalValue.toString());
+  //   }
+  // }, [externalValue, inputValue]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const input = e.target.value;

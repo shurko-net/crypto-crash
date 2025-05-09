@@ -18,7 +18,7 @@ export const Car = memo(
     const isLong = type === "long";
     const carImage = isLong ? GreenCarImg : RedCarImg;
     const wheelImage = isLong ? GreenWheelsImg : RedWheelsImg;
-    const topPosition = isLong ? "-32%" : "12%";
+    const topPosition = isLong ? "-32%" : "6%";
 
     return (
       <div className={`absolute z-3 h-auto`} style={{ top: topPosition }} ref={carRef}>

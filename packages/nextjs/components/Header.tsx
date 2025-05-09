@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { FaucetButton, RainbowKitCustomConnectButton } from "~~/components/scaffold-eth";
+import { RainbowKitCustomConnectButton } from "~~/components/scaffold-eth";
 import Logo from "~~/public/images/logo.png";
 
 /**
@@ -20,7 +20,6 @@ export const Header = () => {
         </div>
         <div className="navbar-end flex-grow flex">
           <RainbowKitCustomConnectButton />
-          <FaucetButton />
         </div>
       </div>
     </header>

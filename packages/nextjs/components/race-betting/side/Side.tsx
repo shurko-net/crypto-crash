@@ -1,5 +1,6 @@
 import { useState } from "react";
 import toast from "react-hot-toast";
+import { useAccount } from "wagmi";
 import BetSideOption from "~~/components/race-betting/side/BetSideOption";
 import Input from "~~/components/race-betting/side/Input";
 import { BetResult, BetSide } from "~~/types/betting";
@@ -12,8 +13,13 @@ interface SideProps {
 export const Side = ({ isBettingOpen, placeBet }: SideProps) => {
   const [betAmount, setBetAmount] = useState<number>(0);
   const [betSide, setBetSide] = useState<BetSide>(null);
+  const { isConnected } = useAccount();
 
   const handleBet = async () => {
+    if (!isConnected) {
+      toast.error("Подключите кошелёк для размещения ставки");
+      return;
+    }
     if (!isBettingOpen) {
       toast.error("Ставки сейчас закрыты");
       return;
@@ -37,7 +43,6 @@ export const Side = ({ isBettingOpen, placeBet }: SideProps) => {
 
       await placeBet(betAmount, betSide);
 
-      // Очистка после успешной ставки
       setBetAmount(0);
       setBetSide(null);
 

@@ -1,19 +1,32 @@
 "use client";
 
 // @refresh reset
+import { useEffect } from "react";
 import { AddressInfoDropdown } from "./AddressInfoDropdown";
 import { AddressQRCodeModal } from "./AddressQRCodeModal";
 import { WrongNetworkDropdown } from "./WrongNetworkDropdown";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { Address } from "viem";
+import { useAccount, useSwitchChain } from "wagmi";
 import { useTargetNetwork } from "~~/hooks/scaffold-eth/useTargetNetwork";
-import { getBlockExplorerAddressLink } from "~~/utils/scaffold-eth";
+import { getBlockExplorerAddressLink, getTargetNetworks } from "~~/utils/scaffold-eth";
 
-/**
- * Custom Wagmi Connect Button (watch balance + custom design)
- */
+const allowedNetworks = getTargetNetworks();
+
+const monadNetwork =
+  allowedNetworks.find(network => network.name.toLowerCase().includes("monad")) || allowedNetworks[0];
+
 export const RainbowKitCustomConnectButton = () => {
+  const { switchChain } = useSwitchChain();
   const { targetNetwork } = useTargetNetwork();
+  const { isConnecting, isReconnecting } = useAccount();
+  const { chain, isConnected } = useAccount();
+
+  useEffect(() => {
+    if (isConnected && chain && chain.id !== monadNetwork.id && switchChain) {
+      switchChain({ chainId: monadNetwork.id });
+    }
+  }, [isConnected, chain, switchChain]);
 
   return (
     <ConnectButton.Custom>
@@ -26,10 +39,20 @@ export const RainbowKitCustomConnectButton = () => {
         return (
           <>
             {(() => {
-              if (!connected) {
+              if (!mounted || isConnecting || isReconnecting) {
                 return (
                   <button
                     className="button !py-[0.5rem] !px-[0.75rem] text-[0.75rem] !border-[0.125rem] lg:!px-7 lg:!py-3 lg:!border-[0.3125rem] lg:!text-[1rem] leading-3"
+                    type="button"
+                  >
+                    <div className="line-skeleton w-[5.67rem] h-[1.125rem] md:h-6 md:w-[7.56rem] !rounded-none !bg-navyBlue"></div>
+                  </button>
+                );
+              }
+              if (!connected) {
+                return (
+                  <button
+                    className="button !py-[0.6875rem] !px-[1.7441rem] text-[0.75rem] !border-[0.125rem] lg:!px-[3.0756rem] lg:!py-[1.125rem] lg:!border-[0.3125rem] lg:!text-[1rem] leading-3"
                     onClick={openConnectModal}
                     type="button"
                   >

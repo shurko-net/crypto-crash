@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Car } from "./Car";
 import { GameInfo } from "./GameInfo";
 import { GameStatus } from "./GameStatus";
@@ -36,7 +36,7 @@ export const CarRace = ({
   const shortCarRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (gameTimer === 10 && !isBettingOpen) {
+    if (gameTimer === 15 && !isBettingOpen) {
       const statusMap: Record<Exclude<BetResult, null>, string> = {
         long: "Win: Long 🚀",
         short: "Win: Short 🔻",
@@ -52,7 +52,17 @@ export const CarRace = ({
     }
   }, [gameTimer, isBettingOpen, betTimer, betResult]);
 
-  useEffect(() => {
+  // useLayoutEffect(() => {
+  //   if (!isGameStarted && longCarRef.current && shortCarRef.current) {
+  //     longCarPositionRef.current = 0;
+  //     shortCarPositionRef.current = 0;
+
+  //     longCarRef.current.style.transform = `translateX(0px)`;
+  //     shortCarRef.current.style.transform = `translateX(0px)`;
+  //   }
+  // }, [isGameStarted]);
+
+  useLayoutEffect(() => {
     if (!isGameStarted) {
       longCarPositionRef.current = 0;
       shortCarPositionRef.current = 0;
@@ -89,7 +99,6 @@ export const CarRace = ({
         longCarPositionRef.current += (targetLongX - longCarPositionRef.current) * smoothFactor;
         shortCarPositionRef.current += (targetShortX - shortCarPositionRef.current) * smoothFactor;
 
-        // Обмеження по межах дороги
         longCarPositionRef.current = Math.max(0, Math.min(maxXLong, longCarPositionRef.current));
         shortCarPositionRef.current = Math.max(0, Math.min(maxXShort, shortCarPositionRef.current));
 
@@ -111,7 +120,7 @@ export const CarRace = ({
     return () => {
       cancelAnimationFrame(animationFrameId);
     };
-  }, [isGameStarted, longCarX, shortCarX]);
+  }, [longCarX, shortCarX, isGameStarted]);
 
   const currentTimer = gameTimer > 0 ? gameTimer : betTimer;
 

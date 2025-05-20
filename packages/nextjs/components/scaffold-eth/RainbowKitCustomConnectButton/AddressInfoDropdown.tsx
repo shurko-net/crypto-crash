@@ -74,13 +74,15 @@ export const AddressInfoDropdown = ({ address, ensAvatar, displayName }: Address
             )}
           </div>
         </div>
-        <div className="px-4 border-t border-gray-300">
+        <div className="h-[1px] bg-gray-300"></div>
+        <div className="h-3"></div>
+        <div className="px-4">
           <button
-            className="bg-transparent box-border flex items-center w-full cursor-pointer text-base font-medium text-[#7c7a85] tap-transparent leading-[1.3] p-3 rounded-lg gap-3 transition-colors transition-transform duration-200"
+            className="bg-transparent box-border flex items-center w-full cursor-pointer text-base font-medium text-[#7c7a85] tap-transparent leading-[1.3] p-3 rounded-lg gap-3 transition-colors duration-200  hover:bg-darkPurpl"
             type="button"
             onClick={() => disconnect()}
           >
-            <ArrowRightEndOnRectangleIcon className="h-6 w-6 ml-2 sm:ml-0" />{" "}
+            <ArrowRightEndOnRectangleIcon className="h-6 w-6 ml-2 sm:ml-0 text-white" />{" "}
             <span className="text-[1rem] text-white font-medium text-left">Disconnect</span>
           </button>
         </div>

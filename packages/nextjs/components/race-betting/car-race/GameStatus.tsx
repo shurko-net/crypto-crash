@@ -3,8 +3,8 @@ import { BetResult } from "~~/app/page";
 
 export const GameStatus = memo(
   ({ timer, status, betResult }: { timer: number; status: string; betResult: BetResult }) => {
-    const isWinnerDisplay = status.includes("Win:") && timer === 10;
-
+    const isWinnerDisplay = status.includes("Win:") && timer === 15;
+    console.log("status", status);
     if (isWinnerDisplay) {
       return (
         <div className={`text-center ${betResult === "long" ? "text-green-400" : "text-red-400"}`}>

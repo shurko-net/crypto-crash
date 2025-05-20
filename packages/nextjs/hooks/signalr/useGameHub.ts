@@ -32,6 +32,7 @@ export const useGameHub = () => {
           onBettingEnded: handleBettingEnded,
           onGameResult: handleGameResult,
           onBetResult: handleBetResult,
+          onConnected: handleConnected,
         });
         setConnectionStatus("connected");
       } catch (error) {
@@ -70,10 +71,12 @@ export const useGameHub = () => {
 
   const handleBettingStarted = (data: GameStateData) => {
     setIsGameStarted(data.isGameStarted);
+    console.log("handleBettingStarted", data.isGameStarted);
     setIsBettingOpen(data.isBettingOpen);
   };
 
   const handleBettingEnded = (data: GameStateData) => {
+    console.log("handleBettingEnded", data.isGameStarted);
     setIsGameStarted(data.isGameStarted);
     setIsBettingOpen(data.isBettingOpen);
   };
@@ -81,11 +84,21 @@ export const useGameHub = () => {
   const handleGameResult = (data: GameResultData) => {
     setGameResult(data.gameResult);
     setIsBettingOpen(data.isBettingOpen);
+    console.log("isGameStarted", data.isGameStarted);
     setIsGameStarted(data.isGameStarted);
   };
 
   const handleBetResult = (data: BetResultPayload) => {
     setUserBetResult(data.betResult);
+    setIsBettingOpen(data.isBettingOpen);
+    console.log("handleBetResult", data);
+    setIsGameStarted(data.isGameStarted);
+  };
+
+  const handleConnected = (data: GameStateData) => {
+    console.log("data: ", data);
+    setIsBettingOpen(data.isBettingOpen);
+    setIsGameStarted(data.isGameStarted);
   };
 
   const placeBet = async (amount: number, side: BetSide): Promise<void> => {

@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import ReactDOM from "react-dom";
+import { XMarkIcon } from "@heroicons/react/24/solid";
 
 interface ModalProps {
   isOpen: boolean;
@@ -41,15 +42,21 @@ export const Modal = ({ isOpen, onClose, children }: ModalProps) => {
           exit={{ opacity: 0 }}
         >
           <motion.div
-            className="bg-[#131418]  rounded-xl relative py-2"
+            className="bg-purpleRoyal  rounded-xl relative py-2 max-w-[358px] w-full"
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.9, opacity: 0 }}
             transition={{ duration: 0.2 }}
           >
-            <button onClick={onClose} className="absolute top-2 right-2 text-gray-500 hover:text-black text-xl">
-              ×
-            </button>
+            <div className="absolute top-6 right-6 translate-x-1.5">
+              <button
+                onClick={onClose}
+                className="text-white text-xl cursor-pointer p-0.5 rounded-[6px] hover:bg-darkPurpl transition-colors duration-200 "
+              >
+                <XMarkIcon className="w-[24px] h-[24px] "></XMarkIcon>
+              </button>
+            </div>
+
             {children}
           </motion.div>
         </motion.div>

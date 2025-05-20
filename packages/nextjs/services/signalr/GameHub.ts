@@ -1,6 +1,5 @@
 import { HubConnection, HubConnectionBuilder } from "@microsoft/signalr";
 import { toast } from "react-hot-toast";
-// добавляем
 import { BetSide } from "~~/types/betting";
 
 export interface Candle {
@@ -39,6 +38,7 @@ type GameHubEventHandlers = {
   onBettingEnded?: (data: GameStateData) => void;
   onGameResult?: (data: GameResultData) => void;
   onBetResult?: (data: BetResultPayload) => void;
+  onConnected?: (data: GameStateData) => void;
 };
 
 class GameHubService {
@@ -66,7 +66,7 @@ class GameHubService {
       setTimeout(() => this.connect(handlers), 2000);
     }
   }
-  //в цикл засунуть эти conection и написать функцию которая будет помагать
+
   private registerEventHandlers(): void {
     if (!this.connection) return;
 
@@ -96,6 +96,10 @@ class GameHubService {
 
     this.connection.on("betResult", (data: BetResultPayload) => {
       this.eventHandlers.onBetResult?.(data);
+    });
+
+    this.connection.on("onConnected", (data: GameStateData) => {
+      this.eventHandlers.onConnected?.(data);
     });
   }
 

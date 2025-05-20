@@ -6,8 +6,7 @@ import { formatEther } from "viem";
 import { useAccount } from "wagmi";
 import { useWatchBalance } from "~~/hooks/scaffold-eth";
 import Monad from "~~/public/images/Monad.svg";
-
-// components/Input.tsx
+import { useGlobalState } from "~~/services/store/store";
 
 interface InputProps {
   onChange: (amount: number) => void;
@@ -15,12 +14,13 @@ interface InputProps {
   value: number;
 }
 
-export default function Input({ onChange, disabled, value: externalValue }: InputProps) {
+export default function Input({ onChange, disabled }: InputProps) {
+  const authStatus = useGlobalState(({ authStatus }) => authStatus);
   const { address } = useAccount();
   const { data: balance } = useWatchBalance({
     address,
   });
-  const formattedBalance = balance ? Number(formatEther(balance.value)) : 0;
+  const formattedBalance = balance && authStatus === "authenticated" ? Number(formatEther(balance.value)) : 0;
   const [inputValue, setInputValue] = useState("");
 
   // useEffect(() => {
@@ -34,11 +34,9 @@ export default function Input({ onChange, disabled, value: externalValue }: Inpu
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const input = e.target.value;
 
-    // Only accept valid number formats
     if (input === "" || /^\d*\.?\d*$/.test(input)) {
       setInputValue(input);
 
-      // Convert to number and notify parent
       const numValue = input === "" ? 0 : parseFloat(input);
       if (!isNaN(numValue)) {
         onChange(numValue);

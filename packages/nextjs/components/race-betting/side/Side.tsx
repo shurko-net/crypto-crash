@@ -1,19 +1,23 @@
 import { useState } from "react";
 import toast from "react-hot-toast";
+import { parseEther } from "viem";
 import BetSideOption from "~~/components/race-betting/side/BetSideOption";
 import Input from "~~/components/race-betting/side/Input";
+import { useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
 import { useGlobalState } from "~~/services/store/store";
 import { BetResult, BetSide } from "~~/types/betting";
 
 interface SideProps {
   isBettingOpen: boolean;
-  placeBet: (amount: number, side: BetResult) => Promise<void>;
+  placeBet: (amount: number, side: BetResult, txHash: string) => Promise<void>;
 }
 
 export const Side = ({ isBettingOpen, placeBet }: SideProps) => {
   const [betAmount, setBetAmount] = useState<number>(0);
   const [betSide, setBetSide] = useState<BetSide>(null);
   const authStatus = useGlobalState(({ authStatus }) => authStatus);
+
+  const { writeContractAsync, isMining } = useScaffoldWriteContract("MyContract");
 
   const handleBet = async () => {
     if (authStatus === "unauthenticated") {
@@ -36,12 +40,12 @@ export const Side = ({ isBettingOpen, placeBet }: SideProps) => {
     }
 
     try {
-      console.log("Отправка ставки:", {
-        amount: betAmount,
-        side: betSide,
+      const txHash = await writeContractAsync({
+        functionName: "deposit",
+        args: [] as any[],
+        value: parseEther(`${betAmount}`),
       });
-
-      await placeBet(betAmount, betSide);
+      await placeBet(betAmount, betSide, txHash as `0x${string}`);
 
       setBetAmount(0);
       setBetSide(null);

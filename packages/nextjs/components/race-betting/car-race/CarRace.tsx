@@ -1,18 +1,39 @@
 "use client";
 
 import { useLayoutEffect, useMemo, useRef } from "react";
+import Image from "next/image";
 import { Car } from "./Car";
 import { GameInfo } from "./GameInfo";
+import { GameStatus } from "./GameStatus";
 import { HistoryItem } from "./HistoryItem";
 import { RoadTrack } from "./RoadTrack";
 import { BanknotesIcon, UsersIcon } from "@heroicons/react/24/solid";
+import LightTrafic from "~~/public/images/light-trafic.png";
 
 interface CarRaceProps {
   isGameStarted: boolean | null;
   shortCarX: number | null;
   longCarX: number | null;
+  isWinnerDisplay: boolean;
+  timer: number | null;
+  gameResult: "long" | "short" | "tie" | null;
+  gameStatus: string;
+  isBettingOpen: boolean | null;
+  getBackgroundColor: () => void;
+  isLoading: boolean;
 }
-export const CarRace = ({ isGameStarted, shortCarX, longCarX }: CarRaceProps) => {
+export const CarRace = ({
+  isGameStarted,
+  shortCarX,
+  longCarX,
+  isWinnerDisplay,
+  timer,
+  gameResult,
+  gameStatus,
+  isBettingOpen,
+  isLoading,
+  getBackgroundColor,
+}: CarRaceProps) => {
   const longCarPositionRef = useRef(0);
   const shortCarPositionRef = useRef(0);
 
@@ -101,28 +122,55 @@ export const CarRace = ({ isGameStarted, shortCarX, longCarX }: CarRaceProps) =>
   const historyItems = useMemo(() => [{ winner: "long" as const }, { winner: "short" as const }], []);
 
   return (
-    <div className="relative w-full h-full overflow-hidden box p-2.5 pt-0 pb-3 md:p-5 md:pb-4 md:pt-0">
-      <div className="relative h-40 overflow-hidden md:h-[19.25rem] lg:h-[20.75rem]">
-        <div className="absolute top-0 left-0 w-full h-full">
-          <div className="absolute left-0 z-[3] w-full bottom-[0] h-[50%]" ref={containerRef}>
-            <RoadTrack isAnimating={isGameStarted} />
-            <Car type="long" isAnimating={isGameStarted} carRef={longCarRef} />
-            <Car type="short" isAnimating={isGameStarted} carRef={shortCarRef} />
+    <div
+      className={`relative w-full h-full overflow-hidden box p-2.5 pt-0 pb-3 md:p-5 md:pb-4 md:pt-0 ${isLoading && "flex items-center justify-center"}`}
+    >
+      {isLoading ? (
+        <span className="loading loading-spinner text-primary "></span>
+      ) : (
+        <>
+          <GameStatus isWinnerDisplay={isWinnerDisplay} timer={timer} gameStatus={gameStatus} gameResult={gameResult} />
+          <div
+            className={`absolute w-[140px] h-[80px] left-0 top-0 rounded-tl-[16px] ${
+              isWinnerDisplay && getBackgroundColor()
+            }`}
+          ></div>
+          <div className="absolute top-[12px] right-[4px]">
+            {isWinnerDisplay && (
+              <div className="absolute rounded-full w-[26px] h-[26px] top-[10px] right-[21px] bg-[#fe2528] border-[#8a051f] border-[2px]"></div>
+            )}
+            {isBettingOpen && (
+              <div className="absolute rounded-full bottom-[40px] right-[21px] w-[26px] h-[26px] bg-[#feaf11] border-[#e54f09] border-[2px]"></div>
+            )}
+            {isGameStarted && (
+              <div className="absolute rounded-full bottom-[7px] right-[22px] w-[26px] h-[26px] bg-[#00b34d] border-[#015043] border-[2px]"></div>
+            )}
+            <Image layout="responsive" alt="logo" className="cursor-pointer" src={LightTrafic} />
           </div>
-        </div>
-      </div>
 
-      <ul className="flex h-8 items-center mx-2 gap-3 lg:gap-6">
-        {gameInfoItems.map((info, index) => (
-          <GameInfo key={index} icon={info.icon} label={info.label} value={info.value} />
-        ))}
-      </ul>
+          <div className="relative h-40 overflow-hidden md:h-[19.25rem] lg:h-[20.75rem]">
+            <div className="absolute top-0 left-0 w-full h-full">
+              <div className="absolute left-0 z-[3] w-full bottom-[0] h-[50%]" ref={containerRef}>
+                <RoadTrack isAnimating={isGameStarted} />
+                <Car type="long" isAnimating={isGameStarted} carRef={longCarRef} />
+                <Car type="short" isAnimating={isGameStarted} carRef={shortCarRef} />
+              </div>
+            </div>
+          </div>
 
-      <div className="no-scrollbar mt-1 lg:mt-3 -mx-2.5 flex h-9 lg:w-[calc(100%+1.75rem*2)] gap-1 overflow-x-auto pl-4 pr-4 pt-1 [mask-image:linear-gradient(90deg,#00000000,black_.5rem,black_calc(100%-4rem),#00000000)] sm:h-11 sm:pt-1 md:py-1 lg:-mx-7 lg:px-7 lg:[mask-image:linear-gradient(90deg,#00000000,black_2rem,black_calc(100%-5rem),#00000000)]">
-        {historyItems.map((item, index) => (
-          <HistoryItem key={index} winner={item.winner} />
-        ))}
-      </div>
+          <ul className="flex h-8 items-center mx-2 gap-3 lg:gap-6">
+            {gameInfoItems.map((info, index) => (
+              <GameInfo key={index} icon={info.icon} label={info.label} value={info.value} />
+            ))}
+          </ul>
+
+          <div className="no-scrollbar mt-1 lg:mt-3 -mx-2.5 flex h-9 lg:w-[calc(100%+1.75rem*2)] gap-1 overflow-x-auto pl-4 pr-4 pt-1 [mask-image:linear-gradient(90deg,#00000000,black_.5rem,black_calc(100%-4rem),#00000000)] sm:h-11 sm:pt-1 md:py-1 lg:-mx-7 lg:px-7 lg:[mask-image:linear-gradient(90deg,#00000000,black_2rem,black_calc(100%-5rem),#00000000)]">
+            {historyItems.map((item, index) => (
+              <HistoryItem key={index} winner={item.winner} />
+            ))}
+          </div>
+        </>
+      )}
     </div>
   );
 };

@@ -3,7 +3,8 @@
 import { useState } from "react";
 import Image from "next/image";
 import { formatEther } from "viem";
-import { useAccount } from "wagmi";
+import { useAccount, useReadContract } from "wagmi";
+import MyContractAbi from "~~/Main.abi.json";
 import { useWatchBalance } from "~~/hooks/scaffold-eth";
 import Monad from "~~/public/images/Monad.svg";
 import { useGlobalState } from "~~/services/store/store";
@@ -20,7 +21,21 @@ export default function Input({ onChange, disabled }: InputProps) {
   const { data: balance } = useWatchBalance({
     address,
   });
+  const {
+    data: contractBalance,
+    isLoading,
+    error,
+    refetch,
+  } = useReadContract({
+    abi: MyContractAbi,
+    address: "0x02999Bcfc9852A8Cab99F302d661AC17ADb70d68",
+    functionName: "balanceOf",
+    args: [address],
+  });
   const formattedBalance = balance && authStatus === "authenticated" ? Number(formatEther(balance.value)) : 0;
+
+  const formattedContractBalance =
+    contractBalance && authStatus === "authenticated" ? Number(formatEther(contractBalance.value)) : 0;
   const [inputValue, setInputValue] = useState("");
 
   // useEffect(() => {
@@ -87,6 +102,10 @@ export default function Input({ onChange, disabled }: InputProps) {
           >
             Max
           </button>
+        </div>
+        <div className="flex">
+          <span>Contract Ballance:</span>
+          <span>{formattedContractBalance.toFixed(4)}</span>
         </div>
       </div>
     </>

@@ -87,14 +87,14 @@ export const useGameHub = () => {
     setIsGameStarted(data.isGameStarted);
   };
 
-  const placeBet = async (amount: number, side: BetSide): Promise<void> => {
+  const placeBet = async (amount: number, side: BetSide, txHash: string): Promise<void> => {
     if (!amount || !side) {
       toast.error("Не указаны сумма или сторона ставки.");
       throw new Error("Amount and side are required");
     }
 
     try {
-      await gameHubService.placeBet(amount, side);
+      await gameHubService.placeBet(amount, side, txHash);
     } catch (error) {
       console.error("Error placing bet:", error);
       toast.error("Ошибка отправки ставки.");

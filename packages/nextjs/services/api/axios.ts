@@ -1,6 +1,6 @@
-import axios, { CreateAxiosDefaults } from "axios"
+import axios, { CreateAxiosDefaults } from "axios";
 
-const isHttps = true;
+const isHttps = false;
 export const API_URL = isHttps ? "https://localhost:7013" : "http://localhost:5080";
 
 const axiosOptions: CreateAxiosDefaults = {

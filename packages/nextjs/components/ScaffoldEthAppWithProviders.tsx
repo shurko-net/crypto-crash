@@ -11,12 +11,25 @@ import {
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "react-hot-toast";
 import { createSiweMessage } from "viem/siwe";
-import { WagmiProvider } from "wagmi";
+import { WagmiProvider, useAccount, useSwitchChain } from "wagmi";
 import { Header } from "~~/components/Header";
+import { authApi } from "~~/services/api/authApi";
 import { useGlobalState } from "~~/services/store/store";
 import { wagmiConfig } from "~~/services/web3/wagmiConfig";
+import { getTargetNetworks } from "~~/utils/scaffold-eth";
 
 const ScaffoldEthApp = ({ children }: { children: React.ReactNode }) => {
+  const { chain, isConnected } = useAccount();
+  const allowedNetworks = getTargetNetworks();
+  const { switchChain } = useSwitchChain();
+  const monadNetwork =
+    allowedNetworks.find(network => network.name.toLowerCase().includes("monad")) || allowedNetworks[0];
+
+  useEffect(() => {
+    if (isConnected && chain && chain.id !== monadNetwork.id && switchChain) {
+      switchChain({ chainId: monadNetwork.id });
+    }
+  }, [isConnected, chain, switchChain, monadNetwork.id]);
   return (
     <>
       <div className="flex flex-col min-h-screen">
@@ -42,7 +55,6 @@ export const ScaffoldEthAppWithProviders = ({ children }: { children: React.Reac
   const verifyingRef = useRef(false);
   const authStatus = useGlobalState(({ authStatus }) => authStatus);
   const setAuthStatus = useGlobalState(({ setAuthStatus }) => setAuthStatus);
-
   const addressRef = useRef<string | undefined>();
 
   useEffect(() => {
@@ -54,10 +66,8 @@ export const ScaffoldEthAppWithProviders = ({ children }: { children: React.Reac
       fetchingStatusRef.current = true;
 
       try {
-        const response = await fetch("https://localhost:7013/api/auth/me");
-        const json = await response.json();
-        console.log(json);
-        setAuthStatus(json.address ? "authenticated" : "unauthenticated");
+        const data = await authApi.getMe();
+        setAuthStatus(data.address ? "authenticated" : "unauthenticated");
       } catch (_error) {
         console.error(_error);
         setAuthStatus("unauthenticated");
@@ -74,11 +84,7 @@ export const ScaffoldEthAppWithProviders = ({ children }: { children: React.Reac
 
   const authenticationAdapter = useMemo(() => {
     return createAuthenticationAdapter({
-      getNonce: async () => {
-        const response = await fetch("https://localhost:7013/api/auth/nonce");
-        return await response.text();
-      },
-
+      getNonce: () => authApi.getNonce(),
       createMessage: ({ nonce, address, chainId }) => {
         console.log("address", address);
         addressRef.current = address;
@@ -96,14 +102,9 @@ export const ScaffoldEthAppWithProviders = ({ children }: { children: React.Reac
         verifyingRef.current = true;
 
         try {
-          const response = await fetch("https://localhost:7013/api/auth/verify", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ message, signature }),
-          });
-
-          const authenticated = Boolean(response.ok);
-
+          const data = await authApi.verify(message, signature);
+          const authenticated = Boolean(data);
+          console.log(authenticated);
           if (authenticated) {
             setAuthStatus(authenticated ? "authenticated" : "unauthenticated");
           }
@@ -119,7 +120,7 @@ export const ScaffoldEthAppWithProviders = ({ children }: { children: React.Reac
 
       signOut: async () => {
         setAuthStatus("unauthenticated");
-        await fetch("https://localhost:7013/api/auth/logout");
+        authApi.logout();
       },
     });
   }, [setAuthStatus]);

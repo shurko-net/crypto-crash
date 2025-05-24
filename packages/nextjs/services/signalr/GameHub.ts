@@ -2,17 +2,14 @@ import { HubConnection, HubConnectionBuilder } from "@microsoft/signalr";
 import { toast } from "react-hot-toast";
 import { BetSide } from "~~/types/betting";
 
-export interface Candle {
-  timestamp: string;
-  open: string;
-  high: string;
-  low: string;
-  close: string;
-}
-
 export interface RaceTickData {
   longX: string;
   shortX: string;
+}
+
+export interface BettingStateData {
+  isGameStarted: boolean;
+  isBettingOpen: boolean;
 }
 
 export interface GameStateData {
@@ -32,10 +29,8 @@ export interface BetResultPayload {
 
 type GameHubEventHandlers = {
   onRaceTick?: (data: RaceTickData) => void;
-  onBetTimer?: (time: number) => void;
-  onGameTimer?: (time: number) => void;
-  onBettingStarted?: (data: GameStateData) => void;
-  onBettingEnded?: (data: GameStateData) => void;
+  onBettingState?: (data: BettingStateData) => void;
+  onTimer?: (time: number) => void;
   onGameResult?: (data: GameResultData) => void;
   onBetResult?: (data: BetResultPayload) => void;
   onConnected?: (data: GameStateData) => void;
@@ -48,7 +43,6 @@ class GameHubService {
 
   public async connect(handlers: GameHubEventHandlers): Promise<void> {
     if (this.connection) {
-      console.log("Connection already exists");
       return;
     }
 
@@ -60,7 +54,7 @@ class GameHubService {
 
     try {
       await this.connection.start();
-      toast.success("Подключено к серверу! 🚀");
+      console.info("[GameHub] Connection established.");
     } catch (error) {
       console.error("Failed to connect to GameHub:", error);
       setTimeout(() => this.connect(handlers), 2000);
@@ -70,42 +64,31 @@ class GameHubService {
   private registerEventHandlers(): void {
     if (!this.connection) return;
 
-    this.connection.on("raceTick", (data: RaceTickData) => {
-      this.eventHandlers.onRaceTick?.(data);
-    });
+    const eventMap: Record<keyof GameHubEventHandlers, string> = {
+      onRaceTick: "raceTick",
+      onBettingState: "bettingState",
+      onTimer: "timer",
+      onGameResult: "gameResult",
+      onBetResult: "betResult",
+      onConnected: "onConnected",
+    };
 
-    this.connection.on("betTimer", (time: number) => {
-      this.eventHandlers.onBetTimer?.(time);
-    });
-
-    this.connection.on("gameTimer", (time: number) => {
-      this.eventHandlers.onGameTimer?.(time);
-    });
-
-    this.connection.on("bettingStarted", (data: GameStateData) => {
-      this.eventHandlers.onBettingStarted?.(data);
-    });
-
-    this.connection.on("bettingEnded", (data: GameStateData) => {
-      this.eventHandlers.onBettingEnded?.(data);
-    });
-
-    this.connection.on("gameResult", (data: GameResultData) => {
-      this.eventHandlers.onGameResult?.(data);
-    });
-
-    this.connection.on("betResult", (data: BetResultPayload) => {
-      this.eventHandlers.onBetResult?.(data);
-    });
-
-    this.connection.on("onConnected", (data: GameStateData) => {
-      this.eventHandlers.onConnected?.(data);
-    });
+    for (const [handlerKey, eventName] of Object.entries(eventMap) as [keyof GameHubEventHandlers, string][]) {
+      this.connection.on(eventName, (data: any) => {
+        const handler = this.eventHandlers[handlerKey];
+        if (handler) {
+          try {
+            handler(data);
+          } catch (error) {
+            console.error(`Error in ${eventName} handler:`, error);
+          }
+        }
+      });
+    }
   }
 
   public async placeBet(amount: number, side: BetSide): Promise<void> {
     if (!this.connection) {
-      toast.error("Нет активного соединения с сервером.");
       throw new Error("No active connection to GameHub");
     }
 
@@ -119,15 +102,15 @@ class GameHubService {
   }
 
   public async disconnect(): Promise<void> {
-    if (this.connection) {
-      try {
-        await this.connection.stop();
-        this.connection = null;
-        toast("Отключено от сервера.");
-      } catch (error) {
-        console.error("Error disconnecting from GameHub:", error);
-        toast.error("Ошибка при отключении от сервера.");
-      }
+    if (!this.connection) {
+      return;
+    }
+    try {
+      await this.connection.stop();
+    } catch (error) {
+      console.error("Error disconnecting from GameHub:", error);
+    } finally {
+      this.connection = null;
     }
   }
 }

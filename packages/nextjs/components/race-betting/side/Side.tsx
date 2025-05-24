@@ -13,7 +13,6 @@ interface SideProps {
 export const Side = ({ isBettingOpen, placeBet }: SideProps) => {
   const [betAmount, setBetAmount] = useState<number>(0);
   const [betSide, setBetSide] = useState<BetSide>(null);
-
   const authStatus = useGlobalState(({ authStatus }) => authStatus);
 
   const handleBet = async () => {

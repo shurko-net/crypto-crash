@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import {
   BetResultPayload,
+  BettingStateData,
   GameResultData,
   GameStateData,
   RaceTickData,
@@ -10,34 +11,36 @@ import {
 import { BetSide } from "~~/types/betting";
 
 export const useGameHub = () => {
-  const [shortCarX, setShortCarX] = useState<number>(0);
-  const [longCarX, setLongCarX] = useState<number>(0);
-  const [betTimer, setBetTimer] = useState<number>(0);
-  const [gameTimer, setGameTimer] = useState<number>(0);
+  const [shortCarX, setShortCarX] = useState<number | null>(null);
+  const [longCarX, setLongCarX] = useState<number | null>(null);
+  const [timer, setTimer] = useState<number | null>(null);
   const [gameResult, setGameResult] = useState<"long" | "short" | "tie" | null>(null);
-  const [isGameStarted, setIsGameStarted] = useState<boolean>(false);
-  const [isBettingOpen, setIsBettingOpen] = useState<boolean>(true);
+  const [isGameStarted, setIsGameStarted] = useState<boolean | null>(null);
+  const [isBettingOpen, setIsBettingOpen] = useState<boolean | null>(null);
   const [userBetResult, setUserBetResult] = useState<"win" | "lose" | null>(null);
-  const [connectionStatus, setConnectionStatus] = useState<"connecting" | "connected" | "disconnected">("disconnected");
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    if (shortCarX !== null && longCarX !== null && timer !== null && isGameStarted !== null && isBettingOpen !== null) {
+      setIsLoading(false);
+    } else {
+      setIsLoading(true);
+    }
+  }, [shortCarX, longCarX, timer, isGameStarted, isBettingOpen]);
 
   useEffect(() => {
     const setupConnection = async () => {
-      setConnectionStatus("connecting");
       try {
         await gameHubService.connect({
           onRaceTick: handleRaceTick,
-          onBetTimer: handleBetTimer,
-          onGameTimer: handleGameTimer,
-          onBettingStarted: handleBettingStarted,
-          onBettingEnded: handleBettingEnded,
+          onBettingState: handleBettingState,
+          onTimer: handleTimer,
           onGameResult: handleGameResult,
           onBetResult: handleBetResult,
           onConnected: handleConnected,
         });
-        setConnectionStatus("connected");
       } catch (error) {
         console.error("Error connecting to GameHub:", error);
-        setConnectionStatus("disconnected");
       }
     };
 
@@ -45,7 +48,6 @@ export const useGameHub = () => {
 
     return () => {
       gameHubService.disconnect();
-      setConnectionStatus("disconnected");
     };
   }, []);
 
@@ -59,44 +61,28 @@ export const useGameHub = () => {
     }
   };
 
-  const handleBetTimer = (time: number) => {
-    setBetTimer(time);
-    setGameTimer(0);
-  };
-
-  const handleGameTimer = (time: number) => {
-    setGameTimer(time);
-    setBetTimer(0);
-  };
-
-  const handleBettingStarted = (data: GameStateData) => {
-    setIsGameStarted(data.isGameStarted);
-    console.log("handleBettingStarted", data.isGameStarted);
-    setIsBettingOpen(data.isBettingOpen);
-  };
-
-  const handleBettingEnded = (data: GameStateData) => {
-    console.log("handleBettingEnded", data.isGameStarted);
+  const handleBettingState = (data: BettingStateData) => {
     setIsGameStarted(data.isGameStarted);
     setIsBettingOpen(data.isBettingOpen);
+  };
+
+  const handleTimer = (time: number) => {
+    setTimer(time);
   };
 
   const handleGameResult = (data: GameResultData) => {
     setGameResult(data.gameResult);
     setIsBettingOpen(data.isBettingOpen);
-    console.log("isGameStarted", data.isGameStarted);
     setIsGameStarted(data.isGameStarted);
   };
 
   const handleBetResult = (data: BetResultPayload) => {
     setUserBetResult(data.betResult);
     setIsBettingOpen(data.isBettingOpen);
-    console.log("handleBetResult", data);
     setIsGameStarted(data.isGameStarted);
   };
 
   const handleConnected = (data: GameStateData) => {
-    console.log("data: ", data);
     setIsBettingOpen(data.isBettingOpen);
     setIsGameStarted(data.isGameStarted);
   };
@@ -119,13 +105,12 @@ export const useGameHub = () => {
   return {
     shortCarX,
     longCarX,
-    betTimer,
-    gameTimer,
+    timer,
     gameResult,
     isGameStarted,
     isBettingOpen,
     userBetResult,
-    connectionStatus,
+    isLoading,
     placeBet,
   };
 };

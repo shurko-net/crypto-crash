@@ -2,11 +2,11 @@ import { useState } from "react";
 import { useTargetNetwork } from "./useTargetNetwork";
 import { MutateOptions } from "@tanstack/react-query";
 import { Abi, ExtractAbiFunctionNames } from "abitype";
+import toast from "react-hot-toast";
 import { Config, UseWriteContractParameters, useAccount, useWriteContract } from "wagmi";
 import { WriteContractErrorType, WriteContractReturnType } from "wagmi/actions";
 import { WriteContractVariables } from "wagmi/query";
 import { useDeployedContractInfo, useTransactor } from "~~/hooks/scaffold-eth";
-import { notification } from "~~/utils/scaffold-eth";
 import {
   ContractAbi,
   ContractName,
@@ -40,16 +40,16 @@ export const useScaffoldWriteContract = <TContractName extends ContractName>(
     options?: ScaffoldWriteContractOptions,
   ) => {
     if (!deployedContractData) {
-      notification.error("Target Contract is not deployed, did you forget to run `yarn deploy`?");
+      toast.error("Target Contract is not deployed, did you forget to run `yarn deploy`?");
       return;
     }
 
     if (!chain?.id) {
-      notification.error("Please connect your wallet");
+      toast.error("Please connect your wallet");
       return;
     }
     if (chain?.id !== targetNetwork.id) {
-      notification.error("You are on the wrong network");
+      toast.error("You are on the wrong network");
       return;
     }
 
@@ -90,15 +90,15 @@ export const useScaffoldWriteContract = <TContractName extends ContractName>(
     options?: Omit<ScaffoldWriteContractOptions, "onBlockConfirmation" | "blockConfirmations">,
   ) => {
     if (!deployedContractData) {
-      notification.error("Target Contract is not deployed, did you forget to run `yarn deploy`?");
+      toast.error("Target Contract is not deployed, did you forget to run `yarn deploy`?");
       return;
     }
     if (!chain?.id) {
-      notification.error("Please connect your wallet");
+      toast.error("Please connect your wallet");
       return;
     }
     if (chain?.id !== targetNetwork.id) {
-      notification.error("You are on the wrong network");
+      toast.error("You are on the wrong network");
       return;
     }
 

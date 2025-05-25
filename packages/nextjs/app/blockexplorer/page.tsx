@@ -3,10 +3,10 @@
 import { useEffect, useState } from "react";
 import { PaginationButton, SearchBar, TransactionsTable } from "./_components";
 import type { NextPage } from "next";
+import toast from "react-hot-toast";
 import { hardhat } from "viem/chains";
 import { useFetchBlocks } from "~~/hooks/scaffold-eth";
 import { useTargetNetwork } from "~~/hooks/scaffold-eth/useTargetNetwork";
-import { notification } from "~~/utils/scaffold-eth";
 
 const BlockExplorer: NextPage = () => {
   const { blocks, transactionReceipts, currentPage, totalBlocks, setCurrentPage, error } = useFetchBlocks();
@@ -28,7 +28,7 @@ const BlockExplorer: NextPage = () => {
 
   useEffect(() => {
     if (!isLocalNetwork) {
-      notification.error(
+      toast.error(
         <>
           <p className="font-bold mt-0 mb-1">
             <code className="italic bg-base-300 text-base font-bold"> targeNetwork </code> is not localhost
@@ -56,7 +56,7 @@ const BlockExplorer: NextPage = () => {
 
   useEffect(() => {
     if (hasError) {
-      notification.error(
+      toast.error(
         <>
           <p className="font-bold mt-0 mb-1">Cannot connect to local provider</p>
           <p className="m-0">

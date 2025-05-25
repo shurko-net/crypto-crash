@@ -19,11 +19,19 @@ import { wagmiConfig } from "~~/services/web3/wagmiConfig";
 import { getTargetNetworks } from "~~/utils/scaffold-eth";
 
 const ScaffoldEthApp = ({ children }: { children: React.ReactNode }) => {
-  const { chain, isConnected } = useAccount();
+  const { address, chain, isConnected } = useAccount();
+  const previousAddress = useRef<string | undefined>();
   const allowedNetworks = getTargetNetworks();
   const { switchChain } = useSwitchChain();
   const monadNetwork =
     allowedNetworks.find(network => network.name.toLowerCase().includes("monad")) || allowedNetworks[0];
+
+  useEffect(() => {
+    if (isConnected && previousAddress.current && address !== previousAddress.current) {
+      console.warn("The address has been changed");
+    }
+    previousAddress.current = address;
+  }, [address, isConnected]);
 
   useEffect(() => {
     if (isConnected && chain && chain.id !== monadNetwork.id && switchChain) {

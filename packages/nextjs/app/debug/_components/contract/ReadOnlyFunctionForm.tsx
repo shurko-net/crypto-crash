@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { InheritanceTooltip } from "./InheritanceTooltip";
 import { Abi, AbiFunction } from "abitype";
+import toast from "react-hot-toast";
 import { Address } from "viem";
 import { useReadContract } from "wagmi";
 import {
@@ -14,7 +15,7 @@ import {
   transformAbiFunction,
 } from "~~/app/debug/_components/contract";
 import { useTargetNetwork } from "~~/hooks/scaffold-eth/useTargetNetwork";
-import { getParsedError, notification } from "~~/utils/scaffold-eth";
+import { getParsedError } from "~~/utils/scaffold-eth";
 
 type ReadOnlyFunctionFormProps = {
   contractAddress: Address;
@@ -48,7 +49,7 @@ export const ReadOnlyFunctionForm = ({
   useEffect(() => {
     if (error) {
       const parsedError = getParsedError(error);
-      notification.error(parsedError);
+      toast.error(parsedError);
     }
   }, [error]);
 

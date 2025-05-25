@@ -1,50 +1,26 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
-import { formatEther } from "viem";
-import { useAccount, useReadContract } from "wagmi";
-import MyContractAbi from "~~/Main.abi.json";
-import { useWatchBalance } from "~~/hooks/scaffold-eth";
 import Monad from "~~/public/images/Monad.svg";
-import { useGlobalState } from "~~/services/store/store";
 
 interface InputProps {
   onChange: (amount: number) => void;
   disabled?: boolean;
   value: number;
+  balance: number;
 }
 
-export default function Input({ onChange, disabled }: InputProps) {
-  const authStatus = useGlobalState(({ authStatus }) => authStatus);
-  const { address } = useAccount();
-  const { data: balance } = useWatchBalance({
-    address,
-  });
-  const {
-    data: contractBalance,
-    isLoading,
-    error,
-    refetch,
-  } = useReadContract({
-    abi: MyContractAbi,
-    address: "0x02999Bcfc9852A8Cab99F302d661AC17ADb70d68",
-    functionName: "balanceOf",
-    args: [address],
-  });
-  const formattedBalance = balance && authStatus === "authenticated" ? Number(formatEther(balance.value)) : 0;
-
-  const formattedContractBalance =
-    contractBalance && authStatus === "authenticated" ? Number(formatEther(contractBalance.value)) : 0;
+export default function Input({ onChange, disabled, balance, value }: InputProps) {
   const [inputValue, setInputValue] = useState("");
 
-  // useEffect(() => {
-  //   if (externalValue === 0 && inputValue !== "") {
-  //     setInputValue("");
-  //   } else if (externalValue > 0 && externalValue.toString() !== inputValue) {
-  //     setInputValue(externalValue.toString());
-  //   }
-  // }, [externalValue, inputValue]);
+  useEffect(() => {
+    if (value === 0 && inputValue !== "") {
+      setInputValue("");
+    } else if (value > 0 && value.toString() !== inputValue) {
+      setInputValue(value.toString());
+    }
+  }, [value]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const input = e.target.value;
@@ -60,7 +36,7 @@ export default function Input({ onChange, disabled }: InputProps) {
   };
 
   const handleMaxClick = () => {
-    const roundedBalance = parseFloat(formattedBalance.toFixed(4));
+    const roundedBalance = parseFloat(balance);
     setInputValue(roundedBalance.toString());
     onChange(roundedBalance);
   };
@@ -92,7 +68,7 @@ export default function Input({ onChange, disabled }: InputProps) {
 
       <div className="w-full justify-end items-center gap-1 text-[#8b98a5] cursor-default flex text-[0.75rem] leading-[0.9375rem] font-light">
         <div className="items-center gap-2 flex-row flex">
-          <div className="cursor-pointer flex flex-col text-[#f0f0f8]">{formattedBalance.toFixed(4)}</div>
+          <div className="cursor-pointer flex flex-col text-[#f0f0f8]">{balance}</div>
           <button
             className="cursor-pointer hover:text-[#7371fc] transition-all duration-300 ease-in-out disabled:opacity-50"
             onClick={handleMaxClick}
@@ -102,10 +78,6 @@ export default function Input({ onChange, disabled }: InputProps) {
           >
             Max
           </button>
-        </div>
-        <div className="flex">
-          <span>Contract Ballance:</span>
-          <span>{formattedContractBalance.toFixed(4)}</span>
         </div>
       </div>
     </>

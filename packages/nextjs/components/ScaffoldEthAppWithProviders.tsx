@@ -25,9 +25,15 @@ const ScaffoldEthApp = ({ children }: { children: React.ReactNode }) => {
   const { switchChain } = useSwitchChain();
   const monadNetwork =
     allowedNetworks.find(network => network.name.toLowerCase().includes("monad")) || allowedNetworks[0];
-
+  const setAuthStatus = useGlobalState(({ setAuthStatus }) => setAuthStatus);
   useEffect(() => {
     if (isConnected && previousAddress.current && address !== previousAddress.current) {
+      setAuthStatus("unauthenticated");
+      try {
+        authApi.logout();
+      } catch (error) {
+        console.error("Logout error:", error);
+      }
       console.warn("The address has been changed");
     }
     previousAddress.current = address;
@@ -128,7 +134,11 @@ export const ScaffoldEthAppWithProviders = ({ children }: { children: React.Reac
 
       signOut: async () => {
         setAuthStatus("unauthenticated");
-        authApi.logout();
+        try {
+          authApi.logout();
+        } catch (error) {
+          console.error("Logout error:", error);
+        }
       },
     });
   }, [setAuthStatus]);

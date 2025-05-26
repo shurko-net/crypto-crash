@@ -39,7 +39,7 @@ type GameHubEventHandlers = {
 class GameHubService {
   private connection: HubConnection | null = null;
   private eventHandlers: GameHubEventHandlers = {};
-  private hubUrl = process.env.NEXT_PUBLIC_SIGNALR_URL || "http://localhost:5080/gamehub";
+  private hubUrl = process.env.NEXT_PUBLIC_SIGNALR_URL || "https://localhost:7013/gamehub";
 
   public async connect(handlers: GameHubEventHandlers): Promise<void> {
     if (this.connection) {

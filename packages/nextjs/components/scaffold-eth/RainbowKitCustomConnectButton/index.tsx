@@ -6,7 +6,6 @@ import { AddressQRCodeModal } from "./AddressQRCodeModal";
 import { WrongNetworkDropdown } from "./WrongNetworkDropdown";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { Address } from "viem";
-import { useAccount } from "wagmi";
 import { useTargetNetwork } from "~~/hooks/scaffold-eth/useTargetNetwork";
 import { useGlobalState } from "~~/services/store/store";
 import { getBlockExplorerAddressLink } from "~~/utils/scaffold-eth";
@@ -14,7 +13,6 @@ import { getBlockExplorerAddressLink } from "~~/utils/scaffold-eth";
 export const RainbowKitCustomConnectButton = () => {
   const { targetNetwork } = useTargetNetwork();
   const authStatus = useGlobalState(({ authStatus }) => authStatus);
-  const { isConnected } = useAccount();
 
   return (
     <ConnectButton.Custom>
@@ -22,11 +20,12 @@ export const RainbowKitCustomConnectButton = () => {
         const blockExplorerAddressLink = account
           ? getBlockExplorerAddressLink(targetNetwork, account.address)
           : undefined;
+        const connected = mounted && account && chain;
 
         return (
           <>
             {(() => {
-              if (authStatus === "loading" || !mounted) {
+              if (authStatus === "loading") {
                 return (
                   <button
                     className="button !py-[0.5rem] !px-[0.75rem] text-[0.75rem] !border-[0.125rem] lg:!px-7 lg:!py-3 lg:!border-[0.3125rem] lg:!text-[1rem] leading-3"
@@ -48,13 +47,24 @@ export const RainbowKitCustomConnectButton = () => {
                 );
               }
 
-              if (isConnected && (chain?.unsupported || chain?.id !== targetNetwork.id)) {
-                return <WrongNetworkDropdown />;
+              if (authStatus === "authenticated") {
+                if (!connected) {
+                  return (
+                    <button
+                      className="button !py-[0.5rem] !px-[0.75rem] text-[0.75rem] !border-[0.125rem] lg:!px-7 lg:!py-3 lg:!border-[0.3125rem] lg:!text-[1rem] leading-3"
+                      type="button"
+                    >
+                      <div className="line-skeleton w-[5.67rem] h-[1.125rem] md:h-6 md:w-[7.56rem] !rounded-none !bg-navyBlue"></div>
+                    </button>
+                  );
+                }
+                if (chain?.unsupported || chain?.id !== targetNetwork.id) {
+                  return <WrongNetworkDropdown />;
+                }
               }
-
               return (
                 <>
-                  {account && (
+                  {authStatus === "authenticated" && account && (
                     <>
                       <AddressInfoDropdown
                         address={account.address as Address}

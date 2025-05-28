@@ -64,6 +64,8 @@ export const useGameHub = () => {
   const handleBettingState = (data: BettingStateData) => {
     setIsGameStarted(data.isGameStarted);
     setIsBettingOpen(data.isBettingOpen);
+    setLongCarX(0);
+    setShortCarX(0);
   };
 
   const handleTimer = (time: number) => {

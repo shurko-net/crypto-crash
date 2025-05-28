@@ -24,7 +24,7 @@ export const GameStatus = memo(({ timer, gameStatus, gameResult, isWinnerDisplay
 
   return (
     <div className="absolute z-[5] left-[1%] top-3 text-center min-w-[140px]">
-      <div className={`text-[1rem] font-bold lg:text-4xl ${isWinnerDisplay && getTextColor()}`}>{timer}s</div>
+      <div className={`text-[1rem] font-bold lg:text-4xl text-grey-400   ${isWinnerDisplay && getTextColor()}`}>{timer}s</div>
       <span className={`text-gray-400 text-sm block ${isWinnerDisplay && getTextColor()}`}>{gameStatus}</span>
     </div>
   );

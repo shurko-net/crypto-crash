@@ -80,13 +80,10 @@ export const CarRace = ({
         const maxXLong = containerWidth - longCarWidth;
         const maxXShort = containerWidth - shortCarWidth;
 
-        const targetLongX = (containerWidth * longCarX) / 100;
-        const targetShortX = (containerWidth * shortCarX) / 100;
-
         const smoothFactor = 0.05;
 
-        longCarPositionRef.current += (targetLongX - longCarPositionRef.current) * smoothFactor;
-        shortCarPositionRef.current += (targetShortX - shortCarPositionRef.current) * smoothFactor;
+        longCarPositionRef.current += (longCarX ?? 0) * smoothFactor;
+        shortCarPositionRef.current += (shortCarX ?? 0) * smoothFactor;
 
         longCarPositionRef.current = Math.max(0, Math.min(maxXLong, longCarPositionRef.current));
         shortCarPositionRef.current = Math.max(0, Math.min(maxXShort, shortCarPositionRef.current));

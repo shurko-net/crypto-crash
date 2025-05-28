@@ -44,13 +44,11 @@ export default function BetAmount({ authStatus, isBettingOpen, placeBet, address
     }
 
     try {
-      //@ts-ignore
       const txHash = await writeContractAsync({
         functionName: "deposit",
-        args: [] as any[],
         value: parseEther(`${betAmount}`),
       });
-      console.log("success");
+      console.log("txHash", txHash);
       await placeBet(betAmount, betSide, txHash as `0x${string}`);
 
       setBetAmount(0);
@@ -69,7 +67,7 @@ export default function BetAmount({ authStatus, isBettingOpen, placeBet, address
     <div className="box rounded-3xl relative px-4 py-4 lg:p-5 lg:z-30 shrink-0 flex flex-col gap-3.5 mb-4">
       <div className="mb-2.5 pl-1.5 text-nano font-medium uppercase text-[#abb2cf]">Enter the bet amount</div>
       <div className="mb-4">
-        <Input onChange={setBetAmount} value={betAmount} balance={formattedBalance.toFixed(4)} />
+        <Input onChange={setBetAmount} value={betAmount} balance={parseFloat(formattedBalance.toFixed(4))} />
       </div>
       <div className="mb-4">
         <div className="text-nano font-medium uppercase text-[#abb2cf] mb-2">Select side</div>

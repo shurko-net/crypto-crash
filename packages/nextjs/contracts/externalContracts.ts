@@ -1,14 +1,16 @@
-import { Abi } from "abitype";
-import MyContractAbi from "~~/Main.abi.json";
 import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
 
-const externalContracts = {
-  10143: {
-    MyContract: {
-      address: "0xd6D4911DE291C97E8bB53DA822Bf78C15c605983",
-      abi: MyContractAbi as Abi,
-    },
-  },
-} as const;
+/**
+ * @example
+ * const externalContracts = {
+ *   1: {
+ *     DAI: {
+ *       address: "0x...",
+ *       abi: [...],
+ *     },
+ *   },
+ * } as const;
+ */
+const externalContracts = {} as const;
 
 export default externalContracts satisfies GenericContractsDeclaration;

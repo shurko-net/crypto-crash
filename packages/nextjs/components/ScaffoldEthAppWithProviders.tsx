@@ -23,6 +23,7 @@ const ScaffoldEthApp = ({ children }: { children: React.ReactNode }) => {
   const previousAddress = useRef<string | undefined>();
   const allowedNetworks = getTargetNetworks();
   const { switchChain } = useSwitchChain();
+
   const monadNetwork =
     allowedNetworks.find(network => network.name.toLowerCase().includes("monad")) || allowedNetworks[0];
   const setAuthStatus = useGlobalState(({ setAuthStatus }) => setAuthStatus);
@@ -44,6 +45,7 @@ const ScaffoldEthApp = ({ children }: { children: React.ReactNode }) => {
       switchChain({ chainId: monadNetwork.id });
     }
   }, [isConnected, chain, switchChain, monadNetwork.id]);
+
   return (
     <>
       <div className="flex flex-col min-h-screen">

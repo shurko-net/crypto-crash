@@ -1,4 +1,5 @@
 import { MutateOptions } from "@tanstack/react-query";
+import type { ExtractAbiFunctionNames } from "abitype";
 import {
   Abi,
   AbiParameter,
@@ -8,7 +9,6 @@ import {
   ExtractAbiEventNames,
   ExtractAbiFunction,
 } from "abitype";
-import type { ExtractAbiFunctionNames } from "abitype";
 import type { Simplify } from "type-fest";
 import type { MergeDeepRecord } from "type-fest/source/merge-deep";
 import {
@@ -258,9 +258,9 @@ export type EventFilters<
   IndexedEventInputs<TContractName, TEventName> extends never
     ? never
     : {
-        [Key in IsContractDeclarationMissing<
-          any,
-          IndexedEventInputs<TContractName, TEventName>["name"]
+        [Key in Exclude<
+          IndexedEventInputs<TContractName, TEventName>["name"],
+          undefined
         >]?: AbiParameterToPrimitiveType<Extract<IndexedEventInputs<TContractName, TEventName>, { name: Key }>>;
       }
 >;

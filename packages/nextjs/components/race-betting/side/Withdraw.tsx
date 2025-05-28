@@ -1,16 +1,16 @@
 import { useState } from "react";
 import Input from "./Input";
-import { formatEther } from "viem";
-import { useAccount } from "wagmi";
-import { useScaffoldReadContract } from "~~/hooks/scaffold-eth";
+import toast from "react-hot-toast";
+import { formatEther, parseEther } from "viem";
+import { useScaffoldReadContract, useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
 import { useGlobalState } from "~~/services/store/store";
 
-export default function Withdraw() {
-  const [betAmount, setBetAmount] = useState<number>(0);
+export default function Withdraw({ address }: { address: string | undefined }) {
+  const [betAmount, setBetAmount] = useState(0);
   const authStatus = useGlobalState(({ authStatus }) => authStatus);
-  const { address } = useAccount();
 
-  //@ts-ignore
+  const { writeContractAsync, isMining } = useScaffoldWriteContract("MyContract");
+
   const {
     data: balance,
     isLoading,
@@ -22,6 +22,35 @@ export default function Withdraw() {
     args: [address],
   });
 
+  const handleBet = async () => {
+    if (authStatus === "unauthenticated") {
+      toast.error("Подключите кошелёк для размещения ставки");
+      return;
+    }
+
+    if (!betAmount || betAmount <= 0) {
+      toast.error("Введите сумму ставки больше 0");
+      return;
+    }
+
+    try {
+      await writeContractAsync({
+        functionName: "withdrawnToUser",
+        args: [
+          {
+            userAddress: `${address}`,
+            amount: parseEther(`${betAmount}`),
+          },
+        ],
+      });
+
+      toast.success("Вывод успешен");
+    } catch (error) {
+      toast.error("Ошибка при отправке ставки");
+      console.error(error);
+    }
+  };
+
   const formattedBalance = balance && authStatus === "authenticated" ? Number(formatEther(balance)) : 0;
 
   return (
@@ -31,8 +60,8 @@ export default function Withdraw() {
         <Input balance={formattedBalance} onChange={setBetAmount} value={betAmount} />
       </div>
       <button
-        // disabled={isMining}
-        // onClick={handleBet}
+        disabled={isMining}
+        onClick={handleBet}
         className="cursor-pointer w-full rounded-[20px] text-goldYellow bg-purpleRoyal border-pinkRose border-[5px] border-solid   text-[32px] uppercase transition-all duration-300 hover:shadow-(--bet-button-shadow) hover:scale-95"
       >
         withdraw

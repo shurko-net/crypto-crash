@@ -16,7 +16,7 @@ export const Side = ({ isBettingOpen, placeBet }: SideProps) => {
   return (
     <div className="order-1 md:w-70 lg:w-79 shrink-0 ">
       <BetAmount address={address} authStatus={authStatus} isBettingOpen={isBettingOpen} placeBet={placeBet} />
-      <Withdraw />
+      <Withdraw address={address} />
     </div>
   );
 };

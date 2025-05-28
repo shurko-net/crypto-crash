@@ -19,6 +19,7 @@ export const useGameHub = () => {
   const [isBettingOpen, setIsBettingOpen] = useState<boolean | null>(null);
   const [userBetResult, setUserBetResult] = useState<"win" | "lose" | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [connectionError, setConnectionError] = useState<Error | null>(null);
 
   useEffect(() => {
     if (shortCarX !== null && longCarX !== null && timer !== null && isGameStarted !== null && isBettingOpen !== null) {
@@ -38,6 +39,7 @@ export const useGameHub = () => {
           onGameResult: handleGameResult,
           onBetResult: handleBetResult,
           onConnected: handleConnected,
+          onConnectionError: handleConnectionError,
         });
       } catch (error) {
         console.error("Error connecting to GameHub:", error);
@@ -86,7 +88,12 @@ export const useGameHub = () => {
 
   const handleConnected = (data: GameStateData) => {
     setIsBettingOpen(data.isBettingOpen);
+
     setIsGameStarted(data.isGameStarted);
+  };
+
+  const handleConnectionError = (error?: Error) => {
+    setConnectionError(error ?? null);
   };
 
   const placeBet = async (amount: number, side: BetSide, txHash: string): Promise<void> => {
@@ -114,5 +121,6 @@ export const useGameHub = () => {
     userBetResult,
     isLoading,
     placeBet,
+    connectionError,
   };
 };

@@ -10,10 +10,11 @@ interface BetAmountProps {
   authStatus: string;
   address: string | undefined;
   isBettingOpen: boolean;
-  placeBet: (amount: number, side: BetSide, txHash: string) => Promise<void>;
+  placeBet: (amount: number, side: BetSide, txHash: string, gameId: string) => Promise<void>;
+  gameId: string;
 }
 
-export default function BetAmount({ authStatus, isBettingOpen, placeBet, address }: BetAmountProps) {
+export default function BetAmount({ authStatus, isBettingOpen, placeBet, address, gameId }: BetAmountProps) {
   const [betAmount, setBetAmount] = useState<number>(0);
   const [betSide, setBetSide] = useState<BetSide>(null);
 
@@ -49,7 +50,7 @@ export default function BetAmount({ authStatus, isBettingOpen, placeBet, address
         value: parseEther(`${betAmount}`),
       });
       console.log("txHash", txHash);
-      await placeBet(betAmount, betSide, txHash as `0x${string}`);
+      await placeBet(betAmount, betSide, txHash as `0x${string}`, gameId);
 
       setBetAmount(0);
       setBetSide(null);

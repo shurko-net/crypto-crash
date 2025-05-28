@@ -1,19 +1,29 @@
 "use client";
 
-import type { NextPage } from "next"
-import { useEffect, useState } from "react"
-import ReactDOM from "react-dom"
-import { PlayerBets } from "~~/components/race-betting/PlayerBets"
-import { CarRace } from "~~/components/race-betting/car-race/CarRace"
-import { Side } from "~~/components/race-betting/side/Side"
-import { useGameHub } from "~~/hooks/signalr/useGameHub"
-import { GameResult } from "~~/types/betting"
+import { useEffect, useState } from "react";
+import type { NextPage } from "next";
+import ReactDOM from "react-dom";
+import { PlayerBets } from "~~/components/race-betting/PlayerBets";
+import { CarRace } from "~~/components/race-betting/car-race/CarRace";
+import { Side } from "~~/components/race-betting/side/Side";
+import { useGameHub } from "~~/hooks/signalr/useGameHub";
+import { GameResult } from "~~/types/betting";
 
 const Home: NextPage = () => {
   const [gameStatus, setGameStatus] = useState<string>("");
 
-  const { shortCarX, longCarX, timer, gameResult, isGameStarted, isBettingOpen, isLoading, placeBet, connectionError } =
-    useGameHub();
+  const {
+    shortCarX,
+    longCarX,
+    timer,
+    gameResult,
+    isGameStarted,
+    isBettingOpen,
+    isLoading,
+    placeBet,
+    connectionError,
+    gameId,
+  } = useGameHub();
 
   const isWinnerDisplay = !isGameStarted && !isBettingOpen;
 
@@ -81,7 +91,7 @@ const Home: NextPage = () => {
             </div>
             <PlayerBets />
           </div>
-          <Side placeBet={placeBet} isBettingOpen={isBettingOpen} />
+          <Side placeBet={placeBet} isBettingOpen={isBettingOpen} gameId={gameId} />
         </div>
       </div>
     </>

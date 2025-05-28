@@ -10,6 +10,7 @@ export interface RaceTickData {
 export interface BettingStateData {
   isGameStarted: boolean;
   isBettingOpen: boolean;
+  gameId: string;
 }
 
 export interface GameStateData {

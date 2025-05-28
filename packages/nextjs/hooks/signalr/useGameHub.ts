@@ -20,6 +20,7 @@ export const useGameHub = () => {
   const [userBetResult, setUserBetResult] = useState<"win" | "lose" | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [connectionError, setConnectionError] = useState<Error | null>(null);
+  const [gameId, setGameId] = useState<string | null>(null);
 
   useEffect(() => {
     if (shortCarX !== null && longCarX !== null && timer !== null && isGameStarted !== null && isBettingOpen !== null) {
@@ -64,6 +65,7 @@ export const useGameHub = () => {
   };
 
   const handleBettingState = (data: BettingStateData) => {
+    setGameId(data.gameId);
     setIsGameStarted(data.isGameStarted);
     setIsBettingOpen(data.isBettingOpen);
     setLongCarX(0);
@@ -122,5 +124,6 @@ export const useGameHub = () => {
     isLoading,
     placeBet,
     connectionError,
+    gameId,
   };
 };

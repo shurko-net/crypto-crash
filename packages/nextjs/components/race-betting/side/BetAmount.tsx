@@ -49,16 +49,15 @@ export default function BetAmount({ authStatus, isBettingOpen, placeBet, address
         functionName: "deposit",
         value: parseEther(`${betAmount}`),
       });
-      console.log("txHash", txHash);
-      await placeBet(betAmount, betSide, txHash as `0x${string}`, gameId);
 
+      await placeBet(betAmount, betSide, txHash as `0x${string}`, gameId);
       setBetAmount(0);
       setBetSide(null);
-
       toast.success("Ставка отправлена! 🎯");
     } catch (error) {
       toast.error("Ошибка при отправке ставки");
       console.error(error);
+      return;
     }
   };
 
@@ -73,8 +72,20 @@ export default function BetAmount({ authStatus, isBettingOpen, placeBet, address
       <div className="mb-4">
         <div className="text-nano font-medium uppercase text-[#abb2cf] mb-2">Select side</div>
         <div className="flex gap-4">
-          <BetSideOption side="long" selected={betSide === "long"} onChange={() => setBetSide("long")} />
-          <BetSideOption side="short" selected={betSide === "short"} onChange={() => setBetSide("short")} />
+          <BetSideOption
+            side="long"
+            selected={betSide === "long"}
+            onChange={() => {
+              setBetSide("long");
+            }}
+          />
+          <BetSideOption
+            side="short"
+            selected={betSide === "short"}
+            onChange={() => {
+              setBetSide("short");
+            }}
+          />
         </div>
       </div>
       <button

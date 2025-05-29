@@ -1,5 +1,7 @@
+import { WinnerType } from "~~/types/betting";
+
 interface HistoryItemProps {
-  winner: "long" | "short";
+  winner: WinnerType;
 }
 
 export const HistoryItem = ({ winner }: HistoryItemProps) => {

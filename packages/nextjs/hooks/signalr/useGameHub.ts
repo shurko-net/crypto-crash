@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import toast from "react-hot-toast";
 import {
   BetResultPayload,
   BettingStateData,
@@ -49,9 +48,7 @@ export const useGameHub = () => {
 
     setupConnection();
 
-    return () => {
-      gameHubService.disconnect();
-    };
+    return () => {};
   }, []);
 
   const handleRaceTick = (data: RaceTickData) => {
@@ -98,17 +95,11 @@ export const useGameHub = () => {
     setConnectionError(error ?? null);
   };
 
-  const placeBet = async (amount: number, side: BetSide, txHash: string): Promise<void> => {
-    if (!amount || !side) {
-      toast.error("Не указаны сумма или сторона ставки.");
-      throw new Error("Amount and side are required");
-    }
-
+  const placeBet = async (amount: number, side: BetSide, txHash: string, gameId: string): Promise<void> => {
     try {
-      await gameHubService.placeBet(amount, side, txHash);
+      await gameHubService.placeBet(amount, side, txHash, gameId);
     } catch (error) {
       console.error("Error placing bet:", error);
-      toast.error("Ошибка отправки ставки.");
       throw error;
     }
   };

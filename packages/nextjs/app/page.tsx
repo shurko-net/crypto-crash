@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import type { NextPage } from "next";
-import ReactDOM from "react-dom";
 import { PlayerBets } from "~~/components/race-betting/PlayerBets";
 import { CarRace } from "~~/components/race-betting/car-race/CarRace";
 import { Side } from "~~/components/race-betting/side/Side";
@@ -24,7 +23,7 @@ const Home: NextPage = () => {
     connectionError,
     gameId,
   } = useGameHub();
-
+  // console.log(isBettingOpen);
   const isWinnerDisplay = !isGameStarted && !isBettingOpen;
 
   useEffect(() => {
@@ -34,6 +33,7 @@ const Home: NextPage = () => {
         short: "Win: Short",
         tie: "Win: Tie",
       };
+
       setGameStatus(gameResult === null ? "Win: Unknown" : statusMap[gameResult]);
     } else if (isGameStarted) {
       setGameStatus("In the Round");
@@ -57,16 +57,14 @@ const Home: NextPage = () => {
     }
   };
 
-  // console.log("connectionError", connectionError);
-
-  if (connectionError) {
-    return ReactDOM.createPortal(
-      <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-md bg-black/70">
-        {connectionError.message}
-      </div>,
-      document.body,
-    );
-  }
+  // if (connectionError) {
+  //   return ReactDOM.createPortal(
+  //     <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-md bg-black/70">
+  //       {connectionError.message}
+  //     </div>,
+  //     document.body,
+  //   );
+  // }
 
   return (
     <>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useLayoutEffect, useMemo, useRef } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import { Car } from "./Car";
 import { GameInfo } from "./GameInfo";
@@ -9,6 +9,8 @@ import { HistoryItem } from "./HistoryItem";
 import { RoadTrack } from "./RoadTrack";
 import { BanknotesIcon, UsersIcon } from "@heroicons/react/24/solid";
 import LightTrafic from "~~/public/images/light-trafic.png";
+import { axiosClassic } from "~~/services/api/axios";
+import { WinnerType } from "~~/types/betting";
 
 interface CarRaceProps {
   isGameStarted: boolean | null;
@@ -41,15 +43,29 @@ export const CarRace = ({
   const longCarRef = useRef<HTMLDivElement>(null);
   const shortCarRef = useRef<HTMLDivElement>(null);
 
-  // useLayoutEffect(() => {
-  //   if (!isGameStarted && longCarRef.current && shortCarRef.current) {
-  //     longCarPositionRef.current = 0;
-  //     shortCarPositionRef.current = 0;
+  const [gameHistory, setGameHistory] = useState<WinnerType[]>([]);
 
-  //     longCarRef.current.style.transform = `translateX(0px)`;
-  //     shortCarRef.current.style.transform = `translateX(0px)`;
-  //   }
-  // }, [isGameStarted]);
+  useEffect(() => {
+    axiosClassic.get<{ items: WinnerType[] }>("api/game/get-history").then(data => {
+      console.log("API response (data.data.items):", data.data.items);
+      setGameHistory(prevHistory => {
+        if (prevHistory.length === 0) {
+          console.log("Initial load, setting all items:", data.data.items);
+          return data.data.items.slice(0, 30);
+        }
+
+        const newValue = data.data.items[0];
+        console.log("New value to add:", newValue);
+        if (newValue && prevHistory[0] !== newValue) {
+          const newHistory = [newValue, ...prevHistory].slice(0, 30);
+          console.log("New history:", newHistory);
+          return newHistory;
+        }
+        console.log("No new value or already exists, keeping previous history");
+        return prevHistory;
+      });
+    });
+  }, [isWinnerDisplay]);
 
   useLayoutEffect(() => {
     if (!isGameStarted) {
@@ -116,8 +132,6 @@ export const CarRace = ({
     [],
   );
 
-  const historyItems = useMemo(() => [{ winner: "long" as const }, { winner: "short" as const }], []);
-
   return (
     <div
       className={`relative w-full h-full overflow-hidden box p-2.5 pt-0 pb-3 md:p-5 md:pb-4 md:pt-0 ${isLoading && "flex items-center justify-center"}`}
@@ -161,9 +175,9 @@ export const CarRace = ({
             ))}
           </ul>
 
-          <div className="no-scrollbar mt-1 lg:mt-3 -mx-2.5 flex h-9 lg:w-[calc(100%+1.75rem*2)] gap-1 overflow-x-auto pl-4 pr-4 pt-1 [mask-image:linear-gradient(90deg,#00000000,black_.5rem,black_calc(100%-4rem),#00000000)] sm:h-11 sm:pt-1 md:py-1 lg:-mx-7 lg:px-7 lg:[mask-image:linear-gradient(90deg,#00000000,black_2rem,black_calc(100%-5rem),#00000000)]">
-            {historyItems.map((item, index) => (
-              <HistoryItem key={index} winner={item.winner} />
+          <div className="no-scrollbar mt-1 lg:mt-3 -mx-2.5 flex h-9 lg:w-[calc(100%+1.75rem*2)] gap-1 overflow-x-auto pl-4 pr-4 pt-1 [mask-image:linear-gradient(90deg,#00000000,black_.5rem,black_calc(100%-4rem),#00000000)] sm:h-11 sm:pt-1 md:py-1 lg:-mx-7 lg:px-7 lg:[mask-image:linear-gradient(90deg,#00000000,black_2rem,black_calc(100%-5rem),#00000000)] overflow-x-hidden transition-all duration-300">
+            {gameHistory.map((item, index) => (
+              <HistoryItem key={index} winner={item} />
             ))}
           </div>
         </>

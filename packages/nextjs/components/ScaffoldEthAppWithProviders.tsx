@@ -27,18 +27,19 @@ const ScaffoldEthApp = ({ children }: { children: React.ReactNode }) => {
   const monadNetwork =
     allowedNetworks.find(network => network.name.toLowerCase().includes("monad")) || allowedNetworks[0];
   const setAuthStatus = useGlobalState(({ setAuthStatus }) => setAuthStatus);
-  useEffect(() => {
-    if (isConnected && previousAddress.current && address !== previousAddress.current) {
-      setAuthStatus("unauthenticated");
-      try {
-        authApi.logout();
-      } catch (error) {
-        console.error("Logout error:", error);
-      }
-      console.warn("The address has been changed");
-    }
-    previousAddress.current = address;
-  }, [address, isConnected]);
+
+  // useEffect(() => {
+  //   if (!isConnected || (previousAddress.current && address !== previousAddress.current)) {
+  //     setAuthStatus("unauthenticated");
+  //     try {
+  //       console.log("success1");
+  //     } catch (error) {
+  //       console.error("Logout error:", error);
+  //     }
+  //     console.warn("The address has been changed");
+  //   }
+  //   previousAddress.current = address;
+  // }, [address, isConnected]);
 
   useEffect(() => {
     if (isConnected && chain && chain.id !== monadNetwork.id && switchChain) {
@@ -96,7 +97,7 @@ export const ScaffoldEthAppWithProviders = ({ children }: { children: React.Reac
 
     window.addEventListener("focus", fetchStatus);
     return () => window.removeEventListener("focus", fetchStatus);
-  }, [setAuthStatus]);
+  }, []);
 
   const authenticationAdapter = useMemo(() => {
     return createAuthenticationAdapter({
@@ -137,6 +138,7 @@ export const ScaffoldEthAppWithProviders = ({ children }: { children: React.Reac
       signOut: async () => {
         setAuthStatus("unauthenticated");
         try {
+          console.log("success2");
           authApi.logout();
         } catch (error) {
           console.error("Logout error:", error);

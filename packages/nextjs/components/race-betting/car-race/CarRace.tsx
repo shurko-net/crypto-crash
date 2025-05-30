@@ -22,6 +22,8 @@ interface CarRaceProps {
   isBettingOpen: boolean | null;
   getBackgroundColor: () => void;
   isLoading: boolean;
+  bank: number | null;
+  gamersCount: number | null;
 }
 
 export const CarRace = ({
@@ -35,6 +37,8 @@ export const CarRace = ({
   isBettingOpen,
   isLoading,
   getBackgroundColor,
+  bank,
+  gamersCount,
 }: CarRaceProps) => {
   const longCarPositionRef = useRef(0);
   const shortCarPositionRef = useRef(0);
@@ -104,10 +108,18 @@ export const CarRace = ({
 
   const gameInfoItems = useMemo(
     () => [
-      { icon: <BanknotesIcon className="mr-1.5 w-4.75 lg:w-5.5 lg:mr-2.5" />, label: "Bank: ", value: "34.00$" },
-      { icon: <UsersIcon className="mr-1.5 w-4.75 lg:w-5.5 lg:mr-2.5" />, label: "Gamers: ", value: "31" },
+      {
+        icon: <BanknotesIcon className="mr-1.5 w-4.75 lg:w-5.5 lg:mr-2.5" />,
+        label: "Bank: ",
+        value: bank ?? 0,
+      },
+      {
+        icon: <UsersIcon className="mr-1.5 w-4.75 lg:w-5.5 lg:mr-2.5" />,
+        label: "Gamers: ",
+        value: gamersCount ?? 0,
+      },
     ],
-    [],
+    [bank, gamersCount],
   );
 
   return (

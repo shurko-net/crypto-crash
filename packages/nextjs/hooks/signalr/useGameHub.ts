@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import {
   BetResultPayload,
+  BetsData,
   BettingStateData,
   GameResultData,
   GameStateData,
@@ -20,6 +21,8 @@ export const useGameHub = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [connectionError, setConnectionError] = useState<Error | null>(null);
   const [gameId, setGameId] = useState<string | null>(null);
+  const [bank, setBank] = useState<number | null>(null);
+  const [gamersCount, setGamersCount] = useState<number | null>(null);
 
   useEffect(() => {
     if (shortCarX !== null && longCarX !== null && timer !== null && isGameStarted !== null && isBettingOpen !== null) {
@@ -40,6 +43,7 @@ export const useGameHub = () => {
           onBetResult: handleBetResult,
           onConnected: handleConnected,
           onConnectionError: handleConnectionError,
+          onBets: handleBets,
         });
       } catch (error) {
         console.error("Error connecting to GameHub:", error);
@@ -69,6 +73,13 @@ export const useGameHub = () => {
     setShortCarX(0);
   };
 
+  const handleBets = (data: BetsData) => {
+    setBank(data.bank);
+    setGamersCount(Object.keys(data._bets).length);
+    console.log("handleBets", data);
+    console.log("GamersCount", Object.keys(data._bets).length);
+  };
+
   const handleTimer = (time: number) => {
     setTimer(time);
   };
@@ -77,6 +88,8 @@ export const useGameHub = () => {
     setGameResult(data.gameResult);
     setIsBettingOpen(data.isBettingOpen);
     setIsGameStarted(data.isGameStarted);
+    setBank(0);
+    setGamersCount(0);
   };
 
   const handleBetResult = (data: BetResultPayload) => {
@@ -87,7 +100,6 @@ export const useGameHub = () => {
 
   const handleConnected = (data: GameStateData) => {
     setIsBettingOpen(data.isBettingOpen);
-
     setIsGameStarted(data.isGameStarted);
   };
 
@@ -116,5 +128,7 @@ export const useGameHub = () => {
     placeBet,
     connectionError,
     gameId,
+    bank,
+    gamersCount,
   };
 };

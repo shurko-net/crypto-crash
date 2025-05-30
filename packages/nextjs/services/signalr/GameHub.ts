@@ -27,6 +27,12 @@ export interface BetResultPayload {
   isBettingOpen: boolean;
   isGameStarted: boolean;
 }
+export interface BetsData {
+  bank: number;
+  _bets: {
+    [address: string]: number;
+  };
+}
 
 type GameHubEventHandlers = {
   onRaceTick?: (data: RaceTickData) => void;
@@ -35,6 +41,7 @@ type GameHubEventHandlers = {
   onGameResult?: (data: GameResultData) => void;
   onBetResult?: (data: BetResultPayload) => void;
   onConnected?: (data: GameStateData) => void;
+  onBets?: (data: BetsData) => void;
   onConnectionError?: (error?: Error) => void;
 };
 
@@ -110,6 +117,7 @@ class GameHubService {
       onBetResult: "betResult",
       onConnected: "onConnected",
       onConnectionError: "onConnectionError",
+      onBets: "bets",
     };
 
     for (const [handlerKey, eventName] of Object.entries(eventMap) as [keyof GameHubEventHandlers, string][]) {
@@ -144,14 +152,6 @@ class GameHubService {
       throw error;
     }
   }
-
-  // public getConnectionState(): string {
-  //   return this.connection?.state || "Disconnected";
-  // }
-
-  // public isConnected(): boolean {
-  //   return this.connection?.state === "Connected";
-  // }
 
   public async disconnect(): Promise<void> {
     if (!this.connection) {

@@ -22,6 +22,8 @@ const Home: NextPage = () => {
     placeBet,
     connectionError,
     gameId,
+    bank,
+    gamersCount,
   } = useGameHub();
 
   const isWinnerDisplay = !isGameStarted && !isBettingOpen;
@@ -34,15 +36,18 @@ const Home: NextPage = () => {
         tie: "Win: Tie",
       };
 
-      setGameStatus(gameResult === null ? "Win: Unknown" : statusMap[gameResult]);
-    } else if (isGameStarted) {
+      setGameStatus((gameResult && statusMap[gameResult]) || "Win: Unknown");
+      return;
+    }
+
+    if (isGameStarted) {
       setGameStatus("In the Round");
     } else if (isBettingOpen) {
       setGameStatus("Round Through");
     } else {
       setGameStatus("");
     }
-  }, [isBettingOpen, timer, gameResult, isGameStarted, isWinnerDisplay]);
+  }, [isWinnerDisplay, isGameStarted, isBettingOpen, gameResult]);
 
   const getBackgroundColor = () => {
     if (isWinnerDisplay) {
@@ -86,6 +91,8 @@ const Home: NextPage = () => {
                   isLoading={isLoading}
                   gameStatus={gameStatus}
                   gameResult={gameResult}
+                  bank={bank}
+                  gamersCount={gamersCount}
                 />
               </>
             </div>

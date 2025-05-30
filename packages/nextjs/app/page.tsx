@@ -23,7 +23,7 @@ const Home: NextPage = () => {
     connectionError,
     gameId,
   } = useGameHub();
-  // console.log(isBettingOpen);
+
   const isWinnerDisplay = !isGameStarted && !isBettingOpen;
 
   useEffect(() => {
@@ -53,6 +53,8 @@ const Home: NextPage = () => {
           return "bg-[radial-gradient(at_top_left,rgba(252,36,162,0.4)_0%,rgba(252,36,162,0.1)_50%,transparent_80%)]";
         case "tie":
           return "bg-[radial-gradient(at_top_left,rgba(254,203,2,0.4)_0%,rgba(254,203,2,0.1)_50%,transparent_80%)]";
+        default:
+          return "";
       }
     }
   };

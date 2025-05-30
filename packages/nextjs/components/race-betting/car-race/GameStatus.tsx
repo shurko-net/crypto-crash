@@ -9,8 +9,6 @@ interface GameStatusProps {
 }
 
 export const GameStatus = memo(({ timer, gameStatus, gameResult, isWinnerDisplay }: GameStatusProps) => {
-  // const isWinnerDisplay = status.includes("Win:") && timer === 15;
-
   const getTextColor = () => {
     switch (gameResult) {
       case "long":
@@ -19,6 +17,8 @@ export const GameStatus = memo(({ timer, gameStatus, gameResult, isWinnerDisplay
         return "text-red-500";
       case "tie":
         return "text-yellow-500";
+      default:
+        return "";
     }
   };
 

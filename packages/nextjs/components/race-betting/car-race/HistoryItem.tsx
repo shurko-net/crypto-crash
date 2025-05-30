@@ -9,19 +9,19 @@ export const HistoryItem = ({ winner }: HistoryItemProps) => {
 
   switch (winner) {
     case "long":
-      bgColor = "bg-vividPurple";
+      bgColor = "bg-[rgba(45,196,78,0.4)]";
       break;
     case "short":
-      bgColor = "bg-aquaBlue";
+      bgColor = "bg-[rgba(252,36,162,0.4)]";
       break;
-    default:
-      bgColor = "";
+    case "tie":
+      bgColor = "bg-[rgba(254,203,2,0.4)]";
   }
 
   return (
     <div className="flex justify-end">
       <div
-        className={`px-3 h-8 font-bold transition-all duration-150 ease-in-out sm:rounded-md sm:text-xs flex items-center rounded-md ${bgColor} hover:filter hover:brightness-[1.1] cursor-pointer text-goldYellow`}
+        className={`min-w-[3.51375rem] px-3 h-8 font-bold transition-all duration-150 ease-in-out sm:rounded-md sm:text-xs flex justify-center items-center rounded-md ${bgColor} hover:filter hover:brightness-[1.1] cursor-pointer text-goldYellow`}
       >
         {winner}
       </div>

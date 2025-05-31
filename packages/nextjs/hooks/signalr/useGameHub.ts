@@ -23,6 +23,7 @@ export const useGameHub = () => {
   const [gameId, setGameId] = useState<string | null>(null);
   const [bank, setBank] = useState<number | null>(null);
   const [gamersCount, setGamersCount] = useState<number | null>(null);
+  const [playerBets, setPlayerBets] = useState({});
 
   useEffect(() => {
     if (shortCarX !== null && longCarX !== null && timer !== null && isGameStarted !== null && isBettingOpen !== null) {
@@ -75,9 +76,8 @@ export const useGameHub = () => {
 
   const handleBets = (data: BetsData) => {
     setBank(data.bank);
-    setGamersCount(Object.keys(data._bets).length);
-    console.log("handleBets", data);
-    console.log("GamersCount", Object.keys(data._bets).length);
+    setGamersCount(Object.keys(data.bets).length);
+    setPlayerBets(data.bets);
   };
 
   const handleTimer = (time: number) => {
@@ -88,8 +88,8 @@ export const useGameHub = () => {
     setGameResult(data.gameResult);
     setIsBettingOpen(data.isBettingOpen);
     setIsGameStarted(data.isGameStarted);
-    setBank(0);
-    setGamersCount(0);
+    // setBank(0);
+    // setGamersCount(0);
   };
 
   const handleBetResult = (data: BetResultPayload) => {
@@ -130,5 +130,6 @@ export const useGameHub = () => {
     gameId,
     bank,
     gamersCount,
+    playerBets,
   };
 };

@@ -111,7 +111,7 @@ export const CarRace = ({
       {
         icon: <BanknotesIcon className="mr-1.5 w-4.75 lg:w-5.5 lg:mr-2.5" />,
         label: "Bank: ",
-        value: bank ?? 0,
+        value: bank ? parseFloat(bank).toFixed(4) : 0,
       },
       {
         icon: <UsersIcon className="mr-1.5 w-4.75 lg:w-5.5 lg:mr-2.5" />,

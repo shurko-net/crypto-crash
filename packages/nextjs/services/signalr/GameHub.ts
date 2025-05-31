@@ -29,7 +29,7 @@ export interface BetResultPayload {
 }
 export interface BetsData {
   bank: number;
-  _bets: {
+  bets: {
     [address: string]: number;
   };
 }

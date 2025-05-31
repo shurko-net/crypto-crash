@@ -23,6 +23,7 @@ const Home: NextPage = () => {
     connectionError,
     gameId,
     bank,
+    playerBets,
     gamersCount,
   } = useGameHub();
 
@@ -96,7 +97,7 @@ const Home: NextPage = () => {
                 />
               </>
             </div>
-            <PlayerBets />
+            <PlayerBets playerBets={playerBets} />
           </div>
           <Side placeBet={placeBet} isBettingOpen={isBettingOpen} gameId={gameId} />
         </div>

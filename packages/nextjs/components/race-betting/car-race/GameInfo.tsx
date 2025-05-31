@@ -1,4 +1,4 @@
-import FlipNumbers from "react-flip-numbers";
+import FlipNumbers from "react-flip-numbers"
 
 interface GameInfoProps {
   icon?: JSX.Element;

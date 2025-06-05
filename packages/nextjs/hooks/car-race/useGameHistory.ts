@@ -13,7 +13,7 @@ export const useGameHistory = (isWinnerDisplay: boolean) => {
     const fetchData = async () => {
       try {
         const { data: response } = await axiosClassic.get<{ items: WinnerType[] }>("api/game/get-history");
-
+        console.log("response", response);
         const rawItems = response.items ?? [];
         const items = rawItems.filter(item => typeof item === "string" && item.trim() !== "");
 
@@ -24,7 +24,7 @@ export const useGameHistory = (isWinnerDisplay: boolean) => {
 
           const newValue = items[0];
 
-          if (newValue && prev[0] !== newValue) {
+          if (newValue) {
             const updatedHistory = [newValue, ...prev].slice(0, 30);
 
             return updatedHistory;

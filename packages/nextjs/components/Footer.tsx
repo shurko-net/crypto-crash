@@ -1,6 +1,5 @@
-import Image from "next/image";
 import Link from "next/link";
-import Logo from "~~/public/images/logo.png";
+import { LogoImage } from "./assets/LogoImage";
 
 export const Footer = () => {
   return (
@@ -9,7 +8,7 @@ export const Footer = () => {
         <div className="">
           <div className="mb-4 lg:mb-6 flex-wrap flex items-center gap-1.5">
             <Link href="/" passHref className="inline-flex items-center gap-2  shrink-0 mr-auto">
-              <Image layout="responsive" alt="logo" className="cursor-pointer" src={Logo} />
+              <LogoImage />
             </Link>
           </div>
           <div className="flex flex-wrap items-end justify-between relative">
@@ -24,27 +23,27 @@ export const Footer = () => {
             <nav className="mr-auto w-full">
               <ul className="-mx-2 flex items-center flex-wrap gap-1 sm:gap-x-1.5 text-sm text-white">
                 <li>
-                  <Link className="block px-2 py-1 transition-colors hover:text-skyBlue" href="/about">
+                  <Link className="block px-2 py-1 transition-colors hover:text-[#7371fc]" href="/about">
                     About Us
                   </Link>
                 </li>
                 <li>
-                  <Link className="block px-2 py-1 transition-colors hover:text-skyBlue" href="/terms">
+                  <Link className="block px-2 py-1 transition-colors hover:text-[#7371fc]" href="/terms">
                     Terms
                   </Link>
                 </li>
                 <li>
-                  <Link className="block px-2 py-1 transition-colors hover:text-skyBlue" href="/privacy">
+                  <Link className="block px-2 py-1 transition-colors hover:text-[#7371fc]" href="/privacy">
                     Privacy
                   </Link>
                 </li>
                 <li>
-                  <Link className="block px-2 py-1 transition-colors hover:text-skyBlue" href="/faq">
+                  <Link className="block px-2 py-1 transition-colors hover:text-[#7371fc]" href="/faq">
                     FAQ
                   </Link>
                 </li>
                 <li>
-                  <Link className="block px-2 py-1 transition-colors hover:text-skyBlue" href="/contact">
+                  <Link className="block px-2 py-1 transition-colors hover:text-[#7371fc]" href="/contact">
                     Contact
                   </Link>
                 </li>

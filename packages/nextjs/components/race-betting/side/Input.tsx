@@ -1,59 +1,42 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Image from "next/image";
 import Monad from "~~/public/images/Monad.svg";
 
 interface InputProps {
-  onChange: (amount: number) => void;
+  onChange: (amount: string) => void;
   disabled?: boolean;
-  value: number;
+  value: string;
   balance: number;
 }
 
 export default function Input({ onChange, disabled, balance, value }: InputProps) {
-  const [inputValue, setInputValue] = useState("");
-
-  useEffect(() => {
-    if (value === 0 && inputValue !== "") {
-      setInputValue("");
-    } else if (value > 0 && value.toString() !== inputValue) {
-      setInputValue(value.toString());
-    }
-  }, [value]);
-
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const input = e.target.value;
 
-    if (input === "" || /^\d*\.?\d*$/.test(input)) {
-      setInputValue(input);
+    const regex = /^\d*\.?\d{0,4}$/;
 
-      const numValue = input === "" ? 0 : parseFloat(input);
-      if (!isNaN(numValue)) {
-        onChange(numValue);
-      }
+    if (regex.test(input)) {
+      onChange(input);
     }
   };
 
   const handleMaxClick = () => {
-    const roundedBalance = parseFloat(balance);
-    setInputValue(roundedBalance.toString());
-    onChange(roundedBalance);
+    const roundedBalance = parseFloat(balance.toFixed(4));
+    onChange(roundedBalance.toString());
   };
 
   return (
     <>
-      <div className="flex flex-col bg-[#181244] rounded-[1rem] gap-2 p-2 pl-4 mb-3">
+      <div className="flex flex-col bg-[#291c66] rounded-[1rem] gap-2 p-2 pl-4 mb-3">
         <div className="grid grid-cols-[1fr_auto] min-h-[2.5rem] mb-0 items-center">
           <input
             type="text"
-            placeholder="0.0"
-            step="any"
+            placeholder="0.0000"
             inputMode="decimal"
             autoComplete="off"
             autoCorrect="off"
-            min="0"
-            value={inputValue}
+            value={value}
             onChange={handleInputChange}
             disabled={disabled}
             className="font-light text-2xl leading-[25px] text-[#f0f0f8] text-start w-full h-[calc(1.5em_+_.75rem_+_2px)] p-0 max-h-[23px] my-2 border-none outline-none bg-transparent disabled:opacity-50"

@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import {
-  BetResultPayload,
   BetsData,
   BettingStateData,
   GameResultData,
@@ -17,21 +16,20 @@ export const useGameHub = () => {
   const [gameResult, setGameResult] = useState<"long" | "short" | "tie" | null>(null);
   const [isGameStarted, setIsGameStarted] = useState<boolean | null>(null);
   const [isBettingOpen, setIsBettingOpen] = useState<boolean | null>(null);
-  const [userBetResult, setUserBetResult] = useState<"win" | "lose" | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+
   const [connectionError, setConnectionError] = useState<Error | null>(null);
   const [gameId, setGameId] = useState<string | null>(null);
   const [bank, setBank] = useState<number | null>(null);
   const [gamersCount, setGamersCount] = useState<number | null>(null);
   const [playerBets, setPlayerBets] = useState({});
+  const [resultBets, setResultBets] = useState<{ [address: string]: boolean }>({});
 
-  useEffect(() => {
-    if (shortCarX !== null && longCarX !== null && timer !== null && isGameStarted !== null && isBettingOpen !== null) {
-      setIsLoading(false);
-    } else {
-      setIsLoading(true);
-    }
-  }, [shortCarX, longCarX, timer, isGameStarted, isBettingOpen]);
+  const isWinnerDisplay = !isGameStarted && !isBettingOpen;
+
+  const validResults = ["long", "short", "tie"] as const;
+
+  const isLoading =
+    shortCarX === null || longCarX === null || timer === null || isGameStarted === null || isBettingOpen === null;
 
   useEffect(() => {
     const setupConnection = async () => {
@@ -41,7 +39,6 @@ export const useGameHub = () => {
           onBettingState: handleBettingState,
           onTimer: handleTimer,
           onGameResult: handleGameResult,
-          onBetResult: handleBetResult,
           onConnected: handleConnected,
           onConnectionError: handleConnectionError,
           onBets: handleBets,
@@ -72,6 +69,12 @@ export const useGameHub = () => {
     setIsBettingOpen(data.isBettingOpen);
     setLongCarX(0);
     setShortCarX(0);
+    if (data.isBettingOpen) {
+      setBank(0);
+      setGamersCount(0);
+      setPlayerBets({});
+      setResultBets({});
+    }
   };
 
   const handleBets = (data: BetsData) => {
@@ -85,17 +88,23 @@ export const useGameHub = () => {
   };
 
   const handleGameResult = (data: GameResultData) => {
-    setGameResult(data.gameResult);
-    setIsBettingOpen(data.isBettingOpen);
-    setIsGameStarted(data.isGameStarted);
-    // setBank(0);
-    // setGamersCount(0);
-  };
+    const gameResultLower = data.gameResult?.toLowerCase() ?? null;
 
-  const handleBetResult = (data: BetResultPayload) => {
-    setUserBetResult(data.betResult);
+    const normalizedResult = validResults.includes(gameResultLower as (typeof validResults)[number])
+      ? (gameResultLower as "long" | "short" | "tie")
+      : null;
+
+    setGameResult(normalizedResult);
     setIsBettingOpen(data.isBettingOpen);
     setIsGameStarted(data.isGameStarted);
+
+    const result: { [address: string]: boolean } = {};
+    data.bets.forEach(bet => {
+      result[bet.userAddress] = bet.isWinner;
+    });
+
+    setResultBets(result);
+    console.log(result);
   };
 
   const handleConnected = (data: GameStateData) => {
@@ -107,9 +116,9 @@ export const useGameHub = () => {
     setConnectionError(error ?? null);
   };
 
-  const placeBet = async (amount: number, side: BetSide, txHash: string, gameId: string): Promise<void> => {
+  const placeBet = async (gameId: string, amount: number, side: BetSide, txHash: string): Promise<void> => {
     try {
-      await gameHubService.placeBet(amount, side, txHash, gameId);
+      await gameHubService.placeBet(gameId, amount, side, txHash);
     } catch (error) {
       console.error("Error placing bet:", error);
       throw error;
@@ -123,7 +132,6 @@ export const useGameHub = () => {
     gameResult,
     isGameStarted,
     isBettingOpen,
-    userBetResult,
     isLoading,
     placeBet,
     connectionError,
@@ -131,5 +139,7 @@ export const useGameHub = () => {
     bank,
     gamersCount,
     playerBets,
+    isWinnerDisplay,
+    resultBets,
   };
 };

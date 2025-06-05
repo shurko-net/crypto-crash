@@ -5,9 +5,9 @@ import { useGlobalState } from "~~/services/store/store";
 import { BetSide } from "~~/types/betting";
 
 interface SideProps {
-  isBettingOpen: boolean;
-  placeBet: (amount: number, side: BetSide, txHash: string) => Promise<void>;
-  gameId: string;
+  isBettingOpen: boolean | null;
+  placeBet: (gameId: string, amount: number, side: BetSide, txHash: string) => Promise<void>;
+  gameId: string | null;
 }
 
 export const Side = ({ isBettingOpen, placeBet, gameId }: SideProps) => {
@@ -15,7 +15,7 @@ export const Side = ({ isBettingOpen, placeBet, gameId }: SideProps) => {
   const { address } = useAccount();
 
   return (
-    <div className="order-1 md:w-70 lg:w-79 shrink-0 ">
+    <div className="order-1 shrink-0 block justify-between md:flex md:gap-x-4 md:shrink-1 md:justify-between md:w-full lg:w-79 lg:shrink-0 lg:block ">
       <BetAmount
         address={address}
         authStatus={authStatus}

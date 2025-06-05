@@ -1,5 +1,4 @@
-import { HubConnection, HubConnectionBuilder } from "@microsoft/signalr";
-import { toast } from "react-hot-toast";
+import { HubConnection, HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
 import { BetSide } from "~~/types/betting";
 
 export interface RaceTickData {
@@ -18,8 +17,17 @@ export interface GameStateData {
   isBettingOpen: boolean;
 }
 
+export type Bet = {
+  amount: number;
+  isWinner: boolean;
+  userAddress: string;
+};
+
+export type Bets = Bet[];
+
 export interface GameResultData extends GameStateData {
   gameResult: "long" | "short" | "tie" | null;
+  bets: Bets;
 }
 
 export interface BetResultPayload {
@@ -27,6 +35,7 @@ export interface BetResultPayload {
   isBettingOpen: boolean;
   isGameStarted: boolean;
 }
+
 export interface BetsData {
   bank: number;
   bets: {
@@ -39,7 +48,6 @@ type GameHubEventHandlers = {
   onBettingState?: (data: BettingStateData) => void;
   onTimer?: (time: number) => void;
   onGameResult?: (data: GameResultData) => void;
-  onBetResult?: (data: BetResultPayload) => void;
   onConnected?: (data: GameStateData) => void;
   onBets?: (data: BetsData) => void;
   onConnectionError?: (error?: Error) => void;
@@ -48,7 +56,7 @@ type GameHubEventHandlers = {
 class GameHubService {
   private connection: HubConnection | null = null;
   private eventHandlers: GameHubEventHandlers = {};
-  private hubUrl = process.env.NEXT_PUBLIC_SIGNALR_URL || "https://localhost:7013/gamehub";
+  private hubUrl = "https://crypto-crush-api.duckdns.org/gamehub";
   private isConnecting = false;
 
   public async connect(handlers: GameHubEventHandlers): Promise<void> {
@@ -62,7 +70,7 @@ class GameHubService {
     try {
       this.connection = new HubConnectionBuilder()
         .withUrl(this.hubUrl, { timeout: 30000 })
-        // .configureLogging(LogLevel.Debug)
+        .configureLogging(LogLevel.Debug)
         .withAutomaticReconnect({
           nextRetryDelayInMilliseconds: retryContext => {
             if (retryContext.previousRetryCount >= 5) {
@@ -99,7 +107,9 @@ class GameHubService {
       console.error("[GameHub] Connection closed permanently:", error);
 
       if (this.eventHandlers.onConnectionError) {
-        this.eventHandlers.onConnectionError(new Error("Max retries exceeded"));
+        this.eventHandlers.onConnectionError(
+          new Error("Could not connect to the server. Check your internet connection or try again later."),
+        );
       }
 
       this.connection = null;
@@ -114,7 +124,6 @@ class GameHubService {
       onBettingState: "bettingState",
       onTimer: "timer",
       onGameResult: "gameResult",
-      onBetResult: "betResult",
       onConnected: "onConnected",
       onConnectionError: "onConnectionError",
       onBets: "bets",
@@ -138,17 +147,21 @@ class GameHubService {
     }
   }
 
-  public async placeBet(amount: number, side: BetSide, txHash: string, gameId: string): Promise<void> {
+  public async placeBet(gameId: string, amount: number, side: BetSide, txHash: string): Promise<void> {
     if (!this.connection) {
       console.log("connection", this.connection);
       throw new Error("No active connection to GameHub");
     }
 
     try {
+      console.log("gameId", gameId);
+      console.log("amount", amount);
+      console.log("amount", typeof amount);
+      console.log("side", side);
+      console.log("txHash", txHash);
       await this.connection.invoke("placeBet", gameId, amount, side, txHash);
     } catch (error) {
       console.error("Error placing bet:", error);
-      toast.error("Ошибка при размещении ставки. Попробуйте снова.");
       throw error;
     }
   }

@@ -49,11 +49,21 @@
   --timer-shadow: 0 6px 0px rgba(0, 0, 0, 1);
   --long-button-shadow: 0 6px 0px rgba(109, 13, 143, 1);
   --short-button-shadow: 0 6px 0px rgba(0, 103, 141, 1);
+  --tie-button-shadow: 0 6px 0px rgba(88, 20, 109, 1);
   --bet-button-shadow: 0 6px 0px rgba(73, 22, 133, 1);
   --neon-box-shadow: 0 0 20px rgba(255, 0, 255, 0.3);
 
   --animate-move-road: move-road 5s linear infinite;
   --animate-rotate-wheel: rotate-wheel 0.5s linear infinite;
+
+  --breakpoint-xs: 475px;
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  --breakpoint-2xl: 1536px;
+  --breakpoint-hd: 1720px;
+  --breakpoint-4k: 2560px;
 }
 
 body {
@@ -82,7 +92,8 @@ p {
 }
 
 .box {
-  background: linear-gradient(135deg, #1a1a2e, #16213e);
+  background: #1c123f;
+  /* background: linear-gradient(135deg, #1a1a2e, #16213e); */
   border-radius: 20px;
   border-width: 5px;
   border-style: solid;

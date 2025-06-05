@@ -21,22 +21,35 @@ export const Car = memo(
     const topPosition = isLong ? "-32%" : "6%";
 
     return (
-      <div className={`absolute z-3 h-auto`} style={{ top: topPosition }} ref={carRef}>
-        <Image alt={`${type}-car`} layout="responsive" src={carImage} />
-        <div className="absolute top-[73%] left-[11.58%]">
+      <div className={`absolute z-3`} style={{ top: topPosition }} ref={carRef}>
+        <div className="relative h-13 md:h-[106px] aspect-[190/106]">
+          <Image
+            alt={`${type}-car`}
+            src={carImage}
+            fill
+            sizes="(min-width: 768px) 190px, 100px"
+            className="object-contain"
+            loading="lazy"
+          />
+        </div>
+        <div className="absolute top-[73%] left-[11.58%] w-[23.09%]  aspect-square">
           <Image
             alt={`${type}-wheel-front`}
             src={wheelImage}
-            className={isAnimating ? "animate-rotate-wheel" : ""}
-            layout="responsive"
+            fill
+            sizes="(min-width: 768px) 44px, 22px"
+            className={`object-contain ${isAnimating ? "animate-rotate-wheel" : ""}`}
+            loading="lazy"
           />
         </div>
-        <div className="absolute top-[73%] left-[64.68%]">
+        <div className="absolute top-[73%] left-[64.68%] w-[23.09%] aspect-square">
           <Image
             alt={`${type}-wheel-back`}
             src={wheelImage}
+            fill
+            sizes="(min-width: 768px) 44px, 22px"
             className={isAnimating ? "animate-rotate-wheel" : ""}
-            layout="responsive"
+            loading="lazy"
           />
         </div>
       </div>

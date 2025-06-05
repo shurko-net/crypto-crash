@@ -1,7 +1,6 @@
 import axios, { CreateAxiosDefaults } from "axios";
 
-const isHttps = true;
-export const API_URL = isHttps ? "https://localhost:7013" : "http://localhost:5080";
+export const API_URL = "https://crypto-crush-api.duckdns.org";
 
 const axiosOptions: CreateAxiosDefaults = {
   baseURL: API_URL,

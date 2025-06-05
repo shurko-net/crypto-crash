@@ -1,13 +1,9 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
+import { LogoImage } from "./assets/LogoImage";
 import { RainbowKitCustomConnectButton } from "./scaffold-eth";
-import Logo from "~~/public/images/logo.png";
 
-/**
- * Site header
- */
 export const Header = () => {
   return (
     <header className="fixed lg:relative top-0 z-10  py-3.5 w-full ">
@@ -15,7 +11,7 @@ export const Header = () => {
       <div className="container flex">
         <div className="navbar-start w-auto lg:w-1/2">
           <Link href="/" passHref className="inline-flex items-center gap-2  shrink-0 ">
-            <Image layout="responsive" alt="logo" className="cursor-pointer" src={Logo} />
+            <LogoImage />
           </Link>
         </div>
         <div className="navbar-end flex-grow flex">

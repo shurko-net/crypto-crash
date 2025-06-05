@@ -7,6 +7,7 @@ import { GameInfo } from "./GameInfo";
 import { GameStatus } from "./GameStatus";
 import { HistoryItem } from "./HistoryItem";
 import { RoadTrack } from "./RoadTrack";
+import { AnimatePresence, motion } from "framer-motion";
 import { BanknotesIcon, UsersIcon } from "@heroicons/react/24/solid";
 import { useGameHistory } from "~~/hooks/car-race/useGameHistory";
 import LightTrafic from "~~/public/images/light-trafic.png";
@@ -42,7 +43,6 @@ export const CarRace = ({
 }: CarRaceProps) => {
   const longCarPositionRef = useRef(0);
   const shortCarPositionRef = useRef(0);
-
   const containerRef = useRef<HTMLDivElement>(null);
   const longCarRef = useRef<HTMLDivElement>(null);
   const shortCarRef = useRef<HTMLDivElement>(null);
@@ -138,15 +138,24 @@ export const CarRace = ({
           ></div>
           <div className="absolute top-[12px] right-[4px]">
             {isWinnerDisplay && (
-              <div className="absolute rounded-full w-[26px] h-[26px] top-[10px] right-[21px] bg-[#fe2528] border-[#8a051f] border-[2px]"></div>
+              <div className="absolute rounded-full bg-[#fe2528] border-[#8a051f] border-[2px] z-[1] w-[34.23%] aspect-square top-[9%] right-[27%]"></div>
             )}
             {isBettingOpen && (
-              <div className="absolute rounded-full bottom-[40px] right-[21px] w-[26px] h-[26px] bg-[#feaf11] border-[#e54f09] border-[2px]"></div>
+              <div className="absolute rounded-full bottom-[40px] bg-[#feaf11] border-[#e54f09] border-[2px] z-[1] w-[34.23%] aspect-square right-[27%]"></div>
             )}
             {isGameStarted && (
-              <div className="absolute rounded-full bottom-[7px] right-[22px] w-[26px] h-[26px] bg-[#00b34d] border-[#015043] border-[2px]"></div>
+              <div className="absolute rounded-full bottom-[7px] bg-[#00b34d] border-[#015043] border-[2px]z-[1] w-[34.23%] aspect-square right-[27%]"></div>
             )}
-            <Image layout="responsive" alt="logo" className="cursor-pointer" src={LightTrafic} />
+            <div className="relative w-[38px] h-[54px] md:w-[63px] md:h-[90px] lg:w-[76px] lg:h-[110px] aspect-[110/76]">
+              <Image
+                alt="light-trafic"
+                src={LightTrafic}
+                fill
+                sizes="(min-width: 1024px) 76px, (min-width: 768px) 63px, 38px"
+                className="object-contain"
+                loading="lazy"
+              />
+            </div>
           </div>
 
           <div className="relative h-40 overflow-hidden md:h-[19.25rem] lg:h-[20.75rem]">
@@ -166,9 +175,19 @@ export const CarRace = ({
           </ul>
 
           <div className="no-scrollbar mt-1 lg:mt-3 -mx-2.5 flex h-9 lg:w-[calc(100%+1.75rem*2)] gap-1 pl-4 pr-4 pt-1 [mask-image:linear-gradient(90deg,#00000000,black_.5rem,black_calc(100%-4rem),#00000000)] sm:h-11 sm:pt-1 md:py-1 lg:-mx-7 lg:px-7 lg:[mask-image:linear-gradient(90deg,#00000000,black_2rem,black_calc(100%-5rem),#00000000)] overflow-x-hidden transition-all duration-300">
-            {gameHistory.map((item, index) => (
-              <HistoryItem key={index} winner={item} />
-            ))}
+            <AnimatePresence initial={false}>
+              {gameHistory.map((item, index) => (
+                <motion.div
+                  key={`${item}-${index}`}
+                  initial={{ opacity: 0, x: -56 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 56 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <HistoryItem winner={item} />
+                </motion.div>
+              ))}
+            </AnimatePresence>
           </div>
         </>
       )}

@@ -9,13 +9,13 @@ import { BetSide } from "~~/types/betting";
 interface BetAmountProps {
   authStatus: string;
   address: string | undefined;
-  isBettingOpen: boolean;
-  placeBet: (amount: number, side: BetSide, txHash: string, gameId: string) => Promise<void>;
-  gameId: string;
+  isBettingOpen: boolean | null;
+  placeBet: (gameId: string, amount: number, side: BetSide, txHash: string) => Promise<void>;
+  gameId: string | null;
 }
 
 export default function BetAmount({ authStatus, isBettingOpen, placeBet, address, gameId }: BetAmountProps) {
-  const [betAmount, setBetAmount] = useState<number>(0);
+  const [betAmount, setBetAmount] = useState("");
   const [betSide, setBetSide] = useState<BetSide>(null);
 
   const { writeContractAsync, isMining } = useScaffoldWriteContract("MyContract");
@@ -26,21 +26,29 @@ export default function BetAmount({ authStatus, isBettingOpen, placeBet, address
 
   const handleBet = async () => {
     if (authStatus === "unauthenticated") {
-      toast.error("Подключите кошелёк для размещения ставки");
+      toast.error("Connect your wallet to place a bet!", {
+        icon: "🚫",
+      });
       return;
     }
     if (!isBettingOpen) {
-      toast.error("Ставки сейчас закрыты");
+      toast.error("Bets are currently closed. Please wait for the next round.", {
+        icon: "⏳",
+      });
       return;
     }
 
-    if (!betAmount || betAmount <= 0) {
-      toast.error("Введите сумму ставки больше 0");
+    if (!betAmount || Number(betAmount) <= 0) {
+      toast.error("Enter a bet amount greater than 0.", {
+        icon: "🚫",
+      });
       return;
     }
 
     if (!betSide) {
-      toast.error("Выберите сторону ставки: long или short");
+      toast.error("Select a side (LONG, SHORT or TIE).", {
+        icon: "🧭",
+      });
       return;
     }
 
@@ -50,11 +58,15 @@ export default function BetAmount({ authStatus, isBettingOpen, placeBet, address
         value: parseEther(`${betAmount}`),
       });
 
-      await placeBet(betAmount, betSide, txHash as `0x${string}`, gameId);
-      setBetAmount(0);
+      if (!gameId) return;
+
+      await placeBet(gameId, Number(betAmount), betSide, txHash as `0x${string}`);
+      setBetAmount("");
       setBetSide(null);
       toast.success("Ставка отправлена! 🎯");
     } catch (error) {
+      setBetAmount("");
+      setBetSide(null);
       toast.error("Ошибка при отправке ставки");
       console.error(error);
       return;
@@ -64,14 +76,14 @@ export default function BetAmount({ authStatus, isBettingOpen, placeBet, address
   const formattedBalance = balance && authStatus === "authenticated" ? Number(formatEther(balance.value)) : 0;
 
   return (
-    <div className="box rounded-3xl relative px-4 py-4 lg:p-5 lg:z-30 shrink-0 flex flex-col gap-3.5 mb-4">
-      <div className="mb-2.5 pl-1.5 text-nano font-medium uppercase text-[#abb2cf]">Enter the bet amount</div>
+    <div className="box rounded-3xl relative px-4 py-4 lg:p-5 lg:z-30 shrink-1 lg:shrink-0 flex flex-col gap-3.5 mb-4 md:mb-0 lg:mb-4">
+      <div className="mb-2.5 pl-1.5 font-medium uppercase text-[#abb2cf]">Enter the bet amount</div>
       <div className="mb-4">
         <Input onChange={setBetAmount} value={betAmount} balance={parseFloat(formattedBalance.toFixed(4))} />
       </div>
       <div className="mb-4">
-        <div className="text-nano font-medium uppercase text-[#abb2cf] mb-2">Select side</div>
-        <div className="flex gap-4">
+        <div className="font-medium uppercase text-[#abb2cf] mb-2">Select side</div>
+        <div className="flex gap-4 mb-4">
           <BetSideOption
             side="long"
             selected={betSide === "long"}
@@ -84,6 +96,15 @@ export default function BetAmount({ authStatus, isBettingOpen, placeBet, address
             selected={betSide === "short"}
             onChange={() => {
               setBetSide("short");
+            }}
+          />
+        </div>
+        <div className="flex">
+          <BetSideOption
+            side="tie"
+            selected={betSide === "tie"}
+            onChange={() => {
+              setBetSide("tie");
             }}
           />
         </div>

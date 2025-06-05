@@ -1,3 +1,4 @@
+import { memo } from "react";
 import BetAmount from "./BetAmount";
 import Withdraw from "./Withdraw";
 import { useAccount } from "wagmi";
@@ -10,7 +11,7 @@ interface SideProps {
   gameId: string | null;
 }
 
-export const Side = ({ isBettingOpen, placeBet, gameId }: SideProps) => {
+const Side = ({ isBettingOpen, placeBet, gameId }: SideProps) => {
   const authStatus = useGlobalState(({ authStatus }) => authStatus);
   const { address } = useAccount();
 
@@ -27,3 +28,5 @@ export const Side = ({ isBettingOpen, placeBet, gameId }: SideProps) => {
     </div>
   );
 };
+
+export default memo(Side);

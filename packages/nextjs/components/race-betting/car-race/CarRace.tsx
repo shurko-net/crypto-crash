@@ -1,11 +1,11 @@
 "use client";
 
-import { useLayoutEffect, useMemo, useRef } from "react";
+import { memo, useLayoutEffect, useMemo, useRef } from "react";
 import Image from "next/image";
 import { Car } from "./Car";
-import { GameInfo } from "./GameInfo";
+import GameInfo from "./GameInfo";
 import { GameStatus } from "./GameStatus";
-import { HistoryItem } from "./HistoryItem";
+import HistoryItem from "./HistoryItem";
 import { RoadTrack } from "./RoadTrack";
 import { AnimatePresence, motion } from "framer-motion";
 import { BanknotesIcon, UsersIcon } from "@heroicons/react/24/solid";
@@ -27,7 +27,7 @@ interface CarRaceProps {
   gamersCount: number | null;
 }
 
-export const CarRace = ({
+const CarRace = ({
   isGameStarted,
   shortCarX,
   longCarX,
@@ -111,12 +111,12 @@ export const CarRace = ({
       {
         icon: <BanknotesIcon className="mr-1.5 w-4.75 lg:w-5.5 lg:mr-2.5" />,
         label: "Bank: ",
-        value: bank ? parseFloat(bank).toFixed(4) : 0,
+        value: bank ? bank.toFixed(4) : "0",
       },
       {
         icon: <UsersIcon className="mr-1.5 w-4.75 lg:w-5.5 lg:mr-2.5" />,
         label: "Gamers: ",
-        value: gamersCount ?? 0,
+        value: String(gamersCount ?? 0),
       },
     ],
     [bank, gamersCount],
@@ -144,7 +144,7 @@ export const CarRace = ({
               <div className="absolute rounded-full bottom-[40px] bg-[#feaf11] border-[#e54f09] border-[2px] z-[1] w-[34.23%] aspect-square right-[27%]"></div>
             )}
             {isGameStarted && (
-              <div className="absolute rounded-full bottom-[7px] bg-[#00b34d] border-[#015043] border-[2px]z-[1] w-[34.23%] aspect-square right-[27%]"></div>
+              <div className="absolute rounded-full bottom-[7px] bg-[#00b34d] border-[#015043] border-[2px] z-[1] w-[34.23%] aspect-square right-[27%]"></div>
             )}
             <div className="relative w-[38px] h-[54px] md:w-[63px] md:h-[90px] lg:w-[76px] lg:h-[110px] aspect-[110/76]">
               <Image
@@ -176,9 +176,9 @@ export const CarRace = ({
 
           <div className="no-scrollbar mt-1 lg:mt-3 -mx-2.5 flex h-9 lg:w-[calc(100%+1.75rem*2)] gap-1 pl-4 pr-4 pt-1 [mask-image:linear-gradient(90deg,#00000000,black_.5rem,black_calc(100%-4rem),#00000000)] sm:h-11 sm:pt-1 md:py-1 lg:-mx-7 lg:px-7 lg:[mask-image:linear-gradient(90deg,#00000000,black_2rem,black_calc(100%-5rem),#00000000)] overflow-x-hidden transition-all duration-300">
             <AnimatePresence initial={false}>
-              {gameHistory.map((item, index) => (
+              {gameHistory.map(item => (
                 <motion.div
-                  key={`${item}-${index}`}
+                  key={item.id}
                   initial={{ opacity: 0, x: -56 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 56 }}
@@ -194,3 +194,5 @@ export const CarRace = ({
     </div>
   );
 };
+
+export default memo(CarRace);

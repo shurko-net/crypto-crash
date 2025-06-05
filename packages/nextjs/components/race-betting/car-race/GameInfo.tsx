@@ -1,12 +1,12 @@
-import FlipNumbers from "react-flip-numbers"
+import { memo } from "react";
+import FlipNumbers from "react-flip-numbers";
 
 interface GameInfoProps {
   icon?: JSX.Element;
   label: string;
   value: string;
 }
-
-export const GameInfo = ({ icon, label, value }: GameInfoProps) => {
+const GameInfo = ({ icon, label, value }: GameInfoProps) => {
   return (
     <li className="flex items-center gap-1 text-tiny font-medium uppercase text-[#a6adcd] crash:text-[#ff9696]">
       {icon}
@@ -23,3 +23,5 @@ export const GameInfo = ({ icon, label, value }: GameInfoProps) => {
     </li>
   );
 };
+
+export default memo(GameInfo);

@@ -12,13 +12,13 @@ export const Car = memo(
     carRef,
   }: {
     type: "long" | "short";
-    isAnimating: boolean;
+    isAnimating: boolean | null;
     carRef: React.RefObject<HTMLDivElement>;
   }) => {
     const isLong = type === "long";
     const carImage = isLong ? GreenCarImg : RedCarImg;
     const wheelImage = isLong ? GreenWheelsImg : RedWheelsImg;
-    const topPosition = isLong ? "-32%" : "6%";
+    const topPosition = isLong ? "-32%" : "10%";
 
     return (
       <div className={`absolute z-3`} style={{ top: topPosition }} ref={carRef}>

@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { DocumentTextIcon } from "@heroicons/react/24/solid";
 
 type BetsProps = {
@@ -5,7 +6,7 @@ type BetsProps = {
   resultBets: { [address: string]: boolean };
 };
 
-export const PlayerBets = ({ playerBets, resultBets }: BetsProps) => {
+const PlayerBets = ({ playerBets, resultBets }: BetsProps) => {
   const isEmpty = Object.keys(playerBets).length === 0;
   return (
     <section className="pt-2 order-2 flex-1 box px-4 py-4 lg:p-5">
@@ -66,3 +67,5 @@ export const PlayerBets = ({ playerBets, resultBets }: BetsProps) => {
     </section>
   );
 };
+
+export default memo(PlayerBets);

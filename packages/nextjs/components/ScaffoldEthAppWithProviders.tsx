@@ -18,15 +18,16 @@ import { useGlobalState } from "~~/services/store/store";
 import { wagmiConfig } from "~~/services/web3/wagmiConfig";
 import { getTargetNetworks } from "~~/utils/scaffold-eth";
 
-const ScaffoldEthApp = ({ children, setAuthStatus, authStatus }: { children: React.ReactNode }) => {
+interface ScaffoldEthAppProps {
+  children: React.ReactNode;
+  authStatus: "authenticated" | "unauthenticated" | "loading";
+  setAuthStatus: (status: "authenticated" | "unauthenticated" | "loading") => void;
+}
+
+const ScaffoldEthApp = ({ children, setAuthStatus, authStatus }: ScaffoldEthAppProps) => {
   const { address, chain, isConnected } = useAccount();
   const allowedNetworks = getTargetNetworks();
   const { switchChain } = useSwitchChain();
-
-  // const { authStatus, setAuthStatus } = useGlobalState(state => ({
-  //   authStatus: state.authStatus,
-  //   setAuthStatus: state.setAuthStatus,
-  // }));
 
   const monadNetwork =
     allowedNetworks.find(network => network.name.toLowerCase().includes("monad")) || allowedNetworks[0];

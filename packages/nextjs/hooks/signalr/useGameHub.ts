@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   BetsData,
   BettingStateData,
@@ -53,7 +53,7 @@ export const useGameHub = () => {
     return () => {};
   }, []);
 
-  const handleRaceTick = (data: RaceTickData) => {
+  const handleRaceTick = useCallback((data: RaceTickData) => {
     const longXValue = parseFloat(data.longX);
     const shortXValue = parseFloat(data.shortX);
 
@@ -61,9 +61,9 @@ export const useGameHub = () => {
       setLongCarX(longXValue);
       setShortCarX(shortXValue);
     }
-  };
+  }, []);
 
-  const handleBettingState = (data: BettingStateData) => {
+  const handleBettingState = useCallback((data: BettingStateData) => {
     setGameId(data.gameId);
     setIsGameStarted(data.isGameStarted);
     setIsBettingOpen(data.isBettingOpen);
@@ -75,19 +75,19 @@ export const useGameHub = () => {
       setPlayerBets({});
       setResultBets({});
     }
-  };
+  }, []);
 
-  const handleBets = (data: BetsData) => {
+  const handleBets = useCallback((data: BetsData) => {
     setBank(data.bank);
     setGamersCount(Object.keys(data.bets).length);
     setPlayerBets(data.bets);
-  };
+  }, []);
 
-  const handleTimer = (time: number) => {
+  const handleTimer = useCallback((time: number) => {
     setTimer(time);
-  };
+  }, []);
 
-  const handleGameResult = (data: GameResultData) => {
+  const handleGameResult = useCallback((data: GameResultData) => {
     const gameResultLower = data.gameResult?.toLowerCase() ?? null;
 
     const normalizedResult = validResults.includes(gameResultLower as (typeof validResults)[number])
@@ -97,49 +97,66 @@ export const useGameHub = () => {
     setGameResult(normalizedResult);
     setIsBettingOpen(data.isBettingOpen);
     setIsGameStarted(data.isGameStarted);
-
     const result: { [address: string]: boolean } = {};
     data.bets.forEach(bet => {
       result[bet.userAddress] = bet.isWinner;
     });
 
     setResultBets(result);
-    console.log(result);
-  };
+  }, []);
 
-  const handleConnected = (data: GameStateData) => {
+  const handleConnected = useCallback((data: GameStateData) => {
     setIsBettingOpen(data.isBettingOpen);
     setIsGameStarted(data.isGameStarted);
-  };
+  }, []);
 
-  const handleConnectionError = (error?: Error) => {
+  const handleConnectionError = useCallback((error?: Error) => {
     setConnectionError(error ?? null);
-  };
+  }, []);
 
-  const placeBet = async (gameId: string, amount: number, side: BetSide, txHash: string): Promise<void> => {
+  const placeBet = useCallback(async (gameId: string, amount: number, side: BetSide, txHash: string): Promise<void> => {
     try {
       await gameHubService.placeBet(gameId, amount, side, txHash);
     } catch (error) {
       console.error("Error placing bet:", error);
       throw error;
     }
-  };
+  }, []);
 
-  return {
-    shortCarX,
-    longCarX,
-    timer,
-    gameResult,
-    isGameStarted,
-    isBettingOpen,
-    isLoading,
-    placeBet,
-    connectionError,
-    gameId,
-    bank,
-    gamersCount,
-    playerBets,
-    isWinnerDisplay,
-    resultBets,
-  };
+  return useMemo(
+    () => ({
+      shortCarX,
+      longCarX,
+      timer,
+      gameResult,
+      isGameStarted,
+      isBettingOpen,
+      isLoading,
+      placeBet,
+      connectionError,
+      gameId,
+      bank,
+      gamersCount,
+      playerBets,
+      isWinnerDisplay,
+      resultBets,
+    }),
+    [
+      shortCarX,
+      longCarX,
+      timer,
+      gameResult,
+      isGameStarted,
+      isBettingOpen,
+      isLoading,
+      placeBet,
+      connectionError,
+      gameId,
+      bank,
+      gamersCount,
+      playerBets,
+      isWinnerDisplay,
+      resultBets,
+    ],
+  );
 };

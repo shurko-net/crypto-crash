@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { memo, useState } from "react";
 import Input from "./Input";
 import toast from "react-hot-toast";
 import { formatEther, parseEther } from "viem";
 import { useScaffoldReadContract, useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
 import { useGlobalState } from "~~/services/store/store";
 
-export default function Withdraw({ address }: { address: string | undefined }) {
+function Withdraw({ address }: { address: string | undefined }) {
   const [betAmount, setBetAmount] = useState("");
   const authStatus = useGlobalState(({ authStatus }) => authStatus);
 
@@ -70,3 +70,5 @@ export default function Withdraw({ address }: { address: string | undefined }) {
     </div>
   );
 }
+
+export default memo(Withdraw);

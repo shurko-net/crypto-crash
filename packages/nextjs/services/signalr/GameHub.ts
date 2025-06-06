@@ -26,7 +26,7 @@ export type Bet = {
 export type Bets = Bet[];
 
 export interface GameResultData extends GameStateData {
-  gameResult: "long" | "short" | "tie" | null;
+  gameResult: "Long" | "Short" | "Tie" | null;
   bets: Bets;
 }
 

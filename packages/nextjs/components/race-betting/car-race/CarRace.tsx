@@ -18,7 +18,7 @@ interface CarRaceProps {
   longCarX: number | null;
   isWinnerDisplay: boolean;
   timer: number | null;
-  gameResult: "long" | "short" | "tie" | null;
+  gameResult: "Long" | "Short" | "Tie" | null;
   gameStatus: string;
   isBettingOpen: boolean | null;
   getBackgroundColor: () => void;
@@ -162,8 +162,8 @@ const CarRace = ({
             <div className="absolute top-0 left-0 w-full h-full">
               <div className="absolute left-0 z-[3] w-full bottom-[0] h-[50%]" ref={containerRef}>
                 <RoadTrack isAnimating={isGameStarted} />
-                <Car type="long" isAnimating={isGameStarted} carRef={longCarRef} />
-                <Car type="short" isAnimating={isGameStarted} carRef={shortCarRef} />
+                <Car type="Long" isAnimating={isGameStarted} carRef={longCarRef} />
+                <Car type="Short" isAnimating={isGameStarted} carRef={shortCarRef} />
               </div>
             </div>
           </div>

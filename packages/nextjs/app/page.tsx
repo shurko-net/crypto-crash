@@ -33,9 +33,9 @@ const Home: NextPage = () => {
   useEffect(() => {
     if (isWinnerDisplay) {
       const statusMap: Record<Exclude<GameResult, null>, string> = {
-        long: "Win: Long",
-        short: "Win: Short",
-        tie: "Win: Tie",
+        Long: "Win: Long",
+        Short: "Win: Short",
+        Tie: "Win: Tie",
       };
 
       setGameStatus((gameResult && statusMap[gameResult]) || "Win: Unknown");
@@ -54,11 +54,11 @@ const Home: NextPage = () => {
   const getBackgroundColor = () => {
     if (isWinnerDisplay) {
       switch (gameResult) {
-        case "long":
+        case "Long":
           return "bg-[radial-gradient(at_top_left,rgba(45,196,78,0.4)_0%,rgba(45,196,78,0.1)_50%,transparent_80%)]";
-        case "short":
+        case "Short":
           return "bg-[radial-gradient(at_top_left,rgba(252,36,162,0.4)_0%,rgba(252,36,162,0.1)_50%,transparent_80%)]";
-        case "tie":
+        case "Tie":
           return "bg-[radial-gradient(at_top_left,rgba(254,203,2,0.4)_0%,rgba(254,203,2,0.1)_50%,transparent_80%)]";
         default:
           return "";

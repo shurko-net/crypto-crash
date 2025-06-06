@@ -11,11 +11,11 @@ export const Car = memo(
     isAnimating,
     carRef,
   }: {
-    type: "long" | "short";
+    type: "Long" | "Short";
     isAnimating: boolean | null;
     carRef: React.RefObject<HTMLDivElement>;
   }) => {
-    const isLong = type === "long";
+    const isLong = type === "Long";
     const carImage = isLong ? GreenCarImg : RedCarImg;
     const wheelImage = isLong ? GreenWheelsImg : RedWheelsImg;
     const topPosition = isLong ? "-32%" : "10%";

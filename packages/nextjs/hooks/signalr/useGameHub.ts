@@ -13,7 +13,7 @@ export const useGameHub = () => {
   const [shortCarX, setShortCarX] = useState<number | null>(null);
   const [longCarX, setLongCarX] = useState<number | null>(null);
   const [timer, setTimer] = useState<number | null>(null);
-  const [gameResult, setGameResult] = useState<"long" | "short" | "tie" | null>(null);
+  const [gameResult, setGameResult] = useState<"Long" | "Short" | "Tie" | null>(null);
   const [isGameStarted, setIsGameStarted] = useState<boolean | null>(null);
   const [isBettingOpen, setIsBettingOpen] = useState<boolean | null>(null);
 
@@ -26,7 +26,7 @@ export const useGameHub = () => {
 
   const isWinnerDisplay = !isGameStarted && !isBettingOpen;
 
-  const validResults = ["long", "short", "tie"] as const;
+  const validResults = ["Long", "Short", "Tie"] as const;
 
   const isLoading =
     shortCarX === null || longCarX === null || timer === null || isGameStarted === null || isBettingOpen === null;
@@ -91,7 +91,7 @@ export const useGameHub = () => {
     const gameResultLower = data.gameResult?.toLowerCase() ?? null;
 
     const normalizedResult = validResults.includes(gameResultLower as (typeof validResults)[number])
-      ? (gameResultLower as "long" | "short" | "tie")
+      ? (gameResultLower as "Long" | "Short" | "Tie")
       : null;
 
     setGameResult(normalizedResult);

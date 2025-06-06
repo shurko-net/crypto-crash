@@ -25,7 +25,6 @@ export default function BetAmount({ authStatus, isBettingOpen, placeBet, address
   });
 
   const handleBet = async () => {
-	  console.log("authStatus", authStatus);
     if (authStatus === "unauthenticated") {
       toast.error("Connect your wallet to place a bet!", {
         icon: "🚫",

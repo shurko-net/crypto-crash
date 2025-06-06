@@ -11,11 +11,11 @@ interface GameStatusProps {
 export const GameStatus = memo(({ timer, gameStatus, gameResult, isWinnerDisplay }: GameStatusProps) => {
   const getTextColor = () => {
     switch (gameResult) {
-      case "long":
+      case "Long":
         return "text-green-500";
-      case "short":
+      case "Short":
         return "text-red-500";
-      case "tie":
+      case "Tie":
         return "text-yellow-500";
       default:
         return "";

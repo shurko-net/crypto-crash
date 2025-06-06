@@ -26,8 +26,6 @@ export const useGameHub = () => {
 
   const isWinnerDisplay = !isGameStarted && !isBettingOpen;
 
-  const validResults = ["Long", "Short", "Tie"] as const;
-
   const isLoading =
     shortCarX === null || longCarX === null || timer === null || isGameStarted === null || isBettingOpen === null;
 
@@ -88,13 +86,7 @@ export const useGameHub = () => {
   }, []);
 
   const handleGameResult = useCallback((data: GameResultData) => {
-    const gameResultLower = data.gameResult?.toLowerCase() ?? null;
-
-    const normalizedResult = validResults.includes(gameResultLower as (typeof validResults)[number])
-      ? (gameResultLower as "Long" | "Short" | "Tie")
-      : null;
-
-    setGameResult(normalizedResult);
+    setGameResult(data.gameResult);
     setIsBettingOpen(data.isBettingOpen);
     setIsGameStarted(data.isGameStarted);
     const result: { [address: string]: boolean } = {};

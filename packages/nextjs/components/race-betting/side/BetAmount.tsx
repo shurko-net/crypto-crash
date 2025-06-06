@@ -25,6 +25,7 @@ export default function BetAmount({ authStatus, isBettingOpen, placeBet, address
   });
 
   const handleBet = async () => {
+	  console.log("authStatus", authStatus);
     if (authStatus === "unauthenticated") {
       toast.error("Connect your wallet to place a bet!", {
         icon: "🚫",
@@ -85,26 +86,26 @@ export default function BetAmount({ authStatus, isBettingOpen, placeBet, address
         <div className="font-medium uppercase text-[#abb2cf] mb-2">Select side</div>
         <div className="flex gap-4 mb-4">
           <BetSideOption
-            side="long"
-            selected={betSide === "long"}
+            side="Long"
+            selected={betSide === "Long"}
             onChange={() => {
-              setBetSide("long");
+              setBetSide("Long");
             }}
           />
           <BetSideOption
-            side="short"
-            selected={betSide === "short"}
+            side="Short"
+            selected={betSide === "Short"}
             onChange={() => {
-              setBetSide("short");
+              setBetSide("Short");
             }}
           />
         </div>
         <div className="flex">
           <BetSideOption
-            side="tie"
-            selected={betSide === "tie"}
+            side="Tie"
+            selected={betSide === "Tie"}
             onChange={() => {
-              setBetSide("tie");
+              setBetSide("Tie");
             }}
           />
         </div>

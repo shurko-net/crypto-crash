@@ -4,7 +4,7 @@
   "version": "0.1.0",
   "scripts": {
     "dev": "next dev",
-    "start": "next dev",
+    "start": "next start",
     "build": "next build",
     "serve": "next start",
     "lint": "next lint",

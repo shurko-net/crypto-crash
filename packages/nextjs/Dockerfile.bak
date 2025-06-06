@@ -1,0 +1,71 @@
+#############################################
+#  STAGE 1: install dependencies (монорепо)  #
+#############################################
+FROM node:18-alpine AS deps
+
+WORKDIR /app
+
+# Включаем Corepack, чтобы Yarn 3 работал
+RUN corepack enable
+
+# Копируем корневые package.json и yarn.lock из монорепозитория
+COPY  package.json \
+      yarn.lock \
+      ./
+
+# Копируем(package.json) фронтенда — нужный workspace
+COPY  packages/nextjs/package.json \
+      packages/nextjs/
+
+# Принудительно говорим Yarn использовать node_modules вместо PnP
+RUN printf "nodeLinker: node-modules\n" > .yarnrc.yml
+
+# Устанавливаем все зависимости (включая workspaces)
+RUN yarn install --frozen-lockfile
+
+
+#############################################
+#  STAGE 2: build Next.js                   #
+#############################################
+FROM node:18-alpine AS builder
+
+WORKDIR /app
+
+# Забираем из deps уже созданную node_modules
+COPY --from=deps /app/node_modules ./node_modules
+
+# Копируем весь исходник монорепо, чтобы Next.js мог собрать всё, включая workspaces
+COPY . .
+
+# Переходим в папку с фронтендом и собираем
+WORKDIR /app/packages/nextjs
+RUN yarn build
+
+
+#############################################
+#  STAGE 3: production image                #
+#############################################
+FROM node:18-alpine AS runner
+
+WORKDIR /app
+
+# Указываем production-режим
+ENV NODE_ENV=production
+
+# Копируем из builder только нужные артефакты:
+# 1) .next (готовый билд)
+# 2) public (статические файлы)
+# 3) node_modules (зависимости монорепо)
+# 4) package.json фронтенда (для скрипта "start")
+COPY --from=builder /app/packages/nextjs/.next           ./packages/nextjs/.next
+COPY --from=builder /app/packages/nextjs/public          ./packages/nextjs/public
+COPY --from=builder /app/node_modules                    ./node_modules
+COPY --from=builder /app/packages/nextjs/package.json    ./packages/nextjs/package.json
+
+# Открываем порт 3000
+EXPOSE 3000
+
+# Переходим в папку фронтенда и запускаем
+WORKDIR /app/packages/nextjs
+CMD ["yarn", "start"]
+

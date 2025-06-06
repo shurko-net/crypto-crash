@@ -24,19 +24,19 @@ interface ScaffoldEthAppProps {
   setAuthStatus: (status: "authenticated" | "unauthenticated" | "loading") => void;
 }
 
-const ScaffoldEthApp = ({ children, setAuthStatus, authStatus }: ScaffoldEthAppProps) => {
-  const { address, chain, isConnected } = useAccount();
+const ScaffoldEthApp = ({ children }: ScaffoldEthAppProps) => {
+  const { chain, isConnected } = useAccount();
   const allowedNetworks = getTargetNetworks();
   const { switchChain } = useSwitchChain();
 
   const monadNetwork =
     allowedNetworks.find(network => network.name.toLowerCase().includes("monad")) || allowedNetworks[0];
 
-  useEffect(() => {
-    if (!address && authStatus === "authenticated") {
-      setAuthStatus("unauthenticated");
-    }
-  }, [address, authStatus, setAuthStatus]);
+//  useEffect(() => {
+  //  if (!address && authStatus === "authenticated") {
+   //   setAuthStatus("unauthenticated");
+   // }
+ // }, [address, authStatus, setAuthStatus]);
 
   useEffect(() => {
     if (isConnected && chain && chain.id !== monadNetwork.id && switchChain) {

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-const baseUrl = "https://crypto-crush-monad.xyz/";
+const baseUrl = "https://crypto-crush-monad.xyz";
 const titleTemplate = "%s | CryptoCrash";
 
 export const getMetadata = ({

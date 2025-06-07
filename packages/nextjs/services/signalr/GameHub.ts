@@ -56,7 +56,7 @@ type GameHubEventHandlers = {
 class GameHubService {
   private connection: HubConnection | null = null;
   private eventHandlers: GameHubEventHandlers = {};
-  private hubUrl = "https://crypto-crush-api.duckdns.org/gamehub";
+  private hubUrl = "https://crypto-crush-monad.xyz/gamehub";
   private isConnecting = false;
 
   public async connect(handlers: GameHubEventHandlers): Promise<void> {

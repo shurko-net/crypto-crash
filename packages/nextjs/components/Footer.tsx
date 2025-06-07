@@ -20,7 +20,7 @@ export const Footer = () => {
                 <div className="text-sm font-medium">CRYPTOCRASH © {new Date().getFullYear()} </div>
               </div>
             </div>
-            <nav className="mr-auto w-full">
+            {/* <nav className="mr-auto w-full">
               <ul className="-mx-2 flex items-center flex-wrap gap-1 sm:gap-x-1.5 text-sm text-white">
                 <li>
                   <Link className="block px-2 py-1 transition-colors hover:text-[#7371fc]" href="/about">
@@ -48,7 +48,7 @@ export const Footer = () => {
                   </Link>
                 </li>
               </ul>
-            </nav>
+            </nav> */}
           </div>
         </div>
       </div>

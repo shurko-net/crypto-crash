@@ -63,11 +63,13 @@ export default function BetAmount({ authStatus, isBettingOpen, placeBet, address
       await placeBet(gameId, Number(betAmount), betSide, txHash as `0x${string}`);
       setBetAmount("");
       setBetSide(null);
-      toast.success("Ставка отправлена! 🎯");
+      toast.success("Bid sent! 🎯", {
+        icon: "🎯",
+      });
     } catch (error) {
       setBetAmount("");
       setBetSide(null);
-      toast.error("Ошибка при отправке ставки");
+      toast.error("Error sending bid");
       console.error(error);
       return;
     }

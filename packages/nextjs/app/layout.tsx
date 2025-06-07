@@ -5,7 +5,8 @@ import { getMetadata } from "~~/utils/scaffold-eth/getMetadata";
 
 export const metadata = getMetadata({
   title: "CryptoCrash",
-  description: "Built with 🏗 Scaffold-ETH 2",
+  description:
+    "Bet on Bitcoin price movements in real time! Watch Long and Short race head-to-head on the Monad testnet in CryptoCrash.",
 });
 
 const ScaffoldEthApp = ({ children }: { children: React.ReactNode }) => {

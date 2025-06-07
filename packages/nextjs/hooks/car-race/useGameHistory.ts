@@ -13,7 +13,6 @@ export const useGameHistory = (isWinnerDisplay: boolean) => {
     const fetchData = async () => {
       try {
         const { data: response } = await axiosClassic.get<{ items: WinnerType[] }>("api/game/get-history");
-        console.log("response", response);
 
         const items = (response.items ?? []).filter(
           item => typeof item === "object" && item.winningSide?.trim() !== "",

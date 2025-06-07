@@ -149,16 +149,10 @@ class GameHubService {
 
   public async placeBet(gameId: string, amount: number, side: BetSide, txHash: string): Promise<void> {
     if (!this.connection) {
-      console.log("connection", this.connection);
       throw new Error("No active connection to GameHub");
     }
 
     try {
-      console.log("gameId", gameId);
-      console.log("amount", amount);
-      console.log("amount", typeof amount);
-      console.log("side", side);
-      console.log("txHash", txHash);
       await this.connection.invoke("placeBet", gameId, amount, side, txHash);
     } catch (error) {
       console.error("Error placing bet:", error);
@@ -177,7 +171,6 @@ class GameHubService {
     } catch (error) {
       console.error("Error disconnecting from GameHub:", error);
     } finally {
-      console.log("disconnect", this.connection);
       this.connection = null;
     }
   }

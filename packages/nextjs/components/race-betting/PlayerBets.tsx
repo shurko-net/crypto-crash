@@ -22,7 +22,6 @@ const PlayerBets = ({ playerBets, resultBets }: BetsProps) => {
         <ul className="overflow-y-auto max-h-[48.75rem]">
           {Object.entries(playerBets).map(([address, bet]) => {
             const isWinner = resultBets[address];
-            console.log(isWinner);
 
             return (
               <li key={address} className="h-18 sm:h-21">

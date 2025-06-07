@@ -32,11 +32,11 @@ const ScaffoldEthApp = ({ children }: ScaffoldEthAppProps) => {
   const monadNetwork =
     allowedNetworks.find(network => network.name.toLowerCase().includes("monad")) || allowedNetworks[0];
 
-//  useEffect(() => {
+  //  useEffect(() => {
   //  if (!address && authStatus === "authenticated") {
-   //   setAuthStatus("unauthenticated");
-   // }
- // }, [address, authStatus, setAuthStatus]);
+  //   setAuthStatus("unauthenticated");
+  // }
+  // }, [address, authStatus, setAuthStatus]);
 
   useEffect(() => {
     if (isConnected && chain && chain.id !== monadNetwork.id && switchChain) {
@@ -101,7 +101,6 @@ export const ScaffoldEthAppWithProviders = ({ children }: { children: React.Reac
     return createAuthenticationAdapter({
       getNonce: () => authApi.getNonce(),
       createMessage: ({ nonce, address, chainId }) => {
-        console.log("address", address);
         addressRef.current = address;
         return createSiweMessage({
           domain: window.location.host,
@@ -119,7 +118,7 @@ export const ScaffoldEthAppWithProviders = ({ children }: { children: React.Reac
         try {
           const data = await authApi.verify(message, signature);
           const authenticated = Boolean(data);
-          console.log(authenticated);
+
           if (authenticated) {
             setAuthStatus(authenticated ? "authenticated" : "unauthenticated");
           }
@@ -136,7 +135,6 @@ export const ScaffoldEthAppWithProviders = ({ children }: { children: React.Reac
       signOut: async () => {
         setAuthStatus("unauthenticated");
         try {
-          console.log("success2");
           authApi.logout();
         } catch (error) {
           console.error("Logout error:", error);

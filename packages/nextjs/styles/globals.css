@@ -1,16 +1,10 @@
 @import "tailwindcss";
-@plugin "daisyui";
 
 @font-face {
   font-family: "CoreSans";
   src: url("../public/fonts/CoreSans.woff2") format("woff2");
   font-weight: 500;
   font-style: normal;
-}
-
-:root,
-[data-theme] {
-  background: oklch(var(--b2));
 }
 
 :root {
@@ -73,6 +67,7 @@ body {
   background-image: url("/images/bg.png");
   background-size: cover;
   background-position: center;
+  color: #ffffff;
 }
 
 h1,

@@ -7,7 +7,6 @@ export const authApi = {
   },
   getNonce: async () => {
     const response = await axiosClassic.get("/api/auth/nonce");
-    console.log(response.data);
     return response.data;
   },
   verify: async (message: string, signature: string) => {

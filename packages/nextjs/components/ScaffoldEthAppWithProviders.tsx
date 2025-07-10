@@ -82,9 +82,25 @@ export const ScaffoldEthAppWithProviders = ({ children }: { children: React.Reac
 
       try {
         const data = await authApi.getMe();
-        setAuthStatus(data.address ? "authenticated" : "unauthenticated");
-      } catch (_error) {
-        console.error(_error);
+        const jwtOk = !!data.address;
+
+        const accounts = await window.ethereum?.request({ method: "eth_accounts" });
+        const walletOk = Array.isArray(accounts) && accounts.length > 0;
+
+        if (jwtOk) {
+          if (walletOk) {
+            setAuthStatus("authenticated");
+          } else {
+            setAuthStatus("unauthenticated");
+          }
+        } else {
+          // JWT невалиден — вызываем logout
+          await authApi.logout();
+          setAuthStatus("unauthenticated");
+          console.log("Clean JWT cookie because JWT invalid");
+        }
+      } catch (error) {
+        console.error(error);
         setAuthStatus("unauthenticated");
       } finally {
         fetchingStatusRef.current = false;
@@ -134,11 +150,6 @@ export const ScaffoldEthAppWithProviders = ({ children }: { children: React.Reac
 
       signOut: async () => {
         setAuthStatus("unauthenticated");
-        try {
-          authApi.logout();
-        } catch (error) {
-          console.error("Logout error:", error);
-        }
       },
     });
   }, [setAuthStatus]);

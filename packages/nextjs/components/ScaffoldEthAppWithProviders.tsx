@@ -94,7 +94,6 @@ export const ScaffoldEthAppWithProviders = ({ children }: { children: React.Reac
             setAuthStatus("unauthenticated");
           }
         } else {
-          // JWT невалиден — вызываем logout
           await authApi.logout();
           setAuthStatus("unauthenticated");
           console.log("Clean JWT cookie because JWT invalid");

@@ -15,6 +15,9 @@ export interface BettingStateData {
 export interface GameStateData {
   isGameStarted: boolean;
   isBettingOpen: boolean;
+  bank: number;
+  bets: Bets;
+  gameId: string;
 }
 
 export type Bet = {
@@ -56,7 +59,7 @@ type GameHubEventHandlers = {
 class GameHubService {
   private connection: HubConnection | null = null;
   private eventHandlers: GameHubEventHandlers = {};
-  private hubUrl = "https://crypto-crush-monad.xyz/gamehub";
+  private hubUrl = process.env.NEXT_PUBLIC_HUB_URL!;
   private isConnecting = false;
 
   public async connect(handlers: GameHubEventHandlers): Promise<void> {

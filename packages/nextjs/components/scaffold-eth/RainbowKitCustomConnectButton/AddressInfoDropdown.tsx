@@ -80,7 +80,10 @@ export const AddressInfoDropdown = ({ address, ensAvatar, displayName }: Address
           <button
             className="bg-transparent box-border flex items-center w-full cursor-pointer text-base font-medium text-[#7c7a85] tap-transparent leading-[1.3] p-3 rounded-lg gap-3 transition-colors duration-200  hover:bg-darkPurpl"
             type="button"
-            onClick={() => disconnect()}
+            onClick={() => {
+              console.log("disconnect");
+              disconnect();
+            }}
           >
             <ArrowRightEndOnRectangleIcon className="h-6 w-6 ml-2 sm:ml-0 text-white" />{" "}
             <span className="text-[1rem] text-white font-medium text-left">Disconnect</span>

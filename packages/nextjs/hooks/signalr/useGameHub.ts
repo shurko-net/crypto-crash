@@ -27,7 +27,7 @@ export const useGameHub = () => {
   const isWinnerDisplay = !isGameStarted && !isBettingOpen;
 
   const isLoading =
-    shortCarX === null || longCarX === null || timer === null || isGameStarted === null || isBettingOpen === null;
+    bank === null || isBettingOpen === null || isGameStarted === null || playerBets === null || gameId === null;
 
   useEffect(() => {
     const setupConnection = async () => {
@@ -100,6 +100,9 @@ export const useGameHub = () => {
   const handleConnected = useCallback((data: GameStateData) => {
     setIsBettingOpen(data.isBettingOpen);
     setIsGameStarted(data.isGameStarted);
+    setBank(data.bank);
+    setGameId(data.gameId);
+    setPlayerBets(data.bets);
   }, []);
 
   const handleConnectionError = useCallback((error?: Error) => {

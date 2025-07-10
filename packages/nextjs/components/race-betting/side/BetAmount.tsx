@@ -46,7 +46,7 @@ export default function BetAmount({ authStatus, isBettingOpen, placeBet, address
     }
 
     if (!betSide) {
-      toast.error("Select a side (LONG, SHORT or TIE).", {
+      toast.error("Select a side (LONG, SHORT).", {
         icon: "🧭",
       });
       return;
@@ -85,7 +85,7 @@ export default function BetAmount({ authStatus, isBettingOpen, placeBet, address
       </div>
       <div className="mb-4">
         <div className="font-medium uppercase text-[#abb2cf] mb-2">Select side</div>
-        <div className="flex gap-4 mb-4">
+        <div className="flex gap-4">
           <BetSideOption
             side="Long"
             selected={betSide === "Long"}
@@ -98,15 +98,6 @@ export default function BetAmount({ authStatus, isBettingOpen, placeBet, address
             selected={betSide === "Short"}
             onChange={() => {
               setBetSide("Short");
-            }}
-          />
-        </div>
-        <div className="flex">
-          <BetSideOption
-            side="Tie"
-            selected={betSide === "Tie"}
-            onChange={() => {
-              setBetSide("Tie");
             }}
           />
         </div>

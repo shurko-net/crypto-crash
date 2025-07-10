@@ -3,22 +3,20 @@ export default function BetSideOption({
   selected,
   onChange,
 }: {
-  side: "Long" | "Short" | "Tie";
+  side: "Long" | "Short";
   selected: boolean;
   onChange: () => void;
 }) {
   const baseClasses = "option items-center cursor-pointer flex-[50%] text-center rounded-[20px] py-[4px]";
 
-  const sideStyles: Record<"Long" | "Short" | "Tie", string> = {
+  const sideStyles: Record<"Long" | "Short", string> = {
     Long: "bg-vividPurple border-[5px] border-solid border-hotPink",
     Short: "bg-aquaBlue border-[5px] border-solid border-turquoise",
-    Tie: "bg-[#55156c] border-[5px] border-solid border-[#a61fa7]",
   };
 
-  const selectedShadow: Record<"Long" | "Short" | "Tie", string> = {
+  const selectedShadow: Record<"Long" | "Short", string> = {
     Long: "shadow-(--long-button-shadow) scale-95",
     Short: "shadow-(--short-button-shadow) scale-95",
-    Tie: "shadow-(--tie-button-shadow) scale-95",
   };
 
   return (

@@ -29,14 +29,33 @@ const ScaffoldEthApp = ({ children }: ScaffoldEthAppProps) => {
   const allowedNetworks = getTargetNetworks();
   const { switchChain } = useSwitchChain();
 
+  const setAuthStatus = useGlobalState(({ setAuthStatus }) => setAuthStatus);
+
   const monadNetwork =
     allowedNetworks.find(network => network.name.toLowerCase().includes("monad")) || allowedNetworks[0];
 
-  //  useEffect(() => {
-  //  if (!address && authStatus === "authenticated") {
-  //   setAuthStatus("unauthenticated");
-  // }
-  // }, [address, authStatus, setAuthStatus]);
+  useEffect(() => {
+    const checkJwt = async () => {
+      setAuthStatus("loading");
+      try {
+        const data = await authApi.getMe();
+        const jwtOk = !!data.address;
+
+        if (jwtOk) {
+          setAuthStatus("authenticated");
+        } else {
+          await authApi.logout();
+          setAuthStatus("unauthenticated");
+          console.log("JWT invalid, logout");
+        }
+      } catch (e) {
+        console.error(e);
+        setAuthStatus("unauthenticated");
+      }
+    };
+
+    checkJwt();
+  }, [setAuthStatus]);
 
   useEffect(() => {
     if (isConnected && chain && chain.id !== monadNetwork.id && switchChain) {
@@ -65,52 +84,10 @@ export const queryClient = new QueryClient({
 });
 
 export const ScaffoldEthAppWithProviders = ({ children }: { children: React.ReactNode }) => {
-  const fetchingStatusRef = useRef(false);
   const verifyingRef = useRef(false);
   const authStatus = useGlobalState(({ authStatus }) => authStatus);
   const setAuthStatus = useGlobalState(({ setAuthStatus }) => setAuthStatus);
-
   const addressRef = useRef<string | undefined>();
-
-  useEffect(() => {
-    const fetchStatus = async () => {
-      if (fetchingStatusRef.current || verifyingRef.current) {
-        return;
-      }
-
-      fetchingStatusRef.current = true;
-      setAuthStatus("loading");
-      try {
-        const data = await authApi.getMe();
-        const jwtOk = !!data.address;
-
-        const accounts = await window.ethereum?.request({ method: "eth_accounts" });
-        const walletOk = Array.isArray(accounts) && accounts.length > 0;
-
-        if (jwtOk) {
-          if (walletOk) {
-            setAuthStatus("authenticated");
-          } else {
-            setAuthStatus("unauthenticated");
-          }
-        } else {
-          await authApi.logout();
-          setAuthStatus("unauthenticated");
-          console.log("Clean JWT cookie because JWT invalid");
-        }
-      } catch (error) {
-        console.error(error);
-        setAuthStatus("unauthenticated");
-      } finally {
-        fetchingStatusRef.current = false;
-      }
-    };
-
-    fetchStatus();
-
-    window.addEventListener("focus", fetchStatus);
-    return () => window.removeEventListener("focus", fetchStatus);
-  }, []);
 
   const authenticationAdapter = useMemo(() => {
     return createAuthenticationAdapter({
@@ -147,7 +124,10 @@ export const ScaffoldEthAppWithProviders = ({ children }: { children: React.Reac
         }
       },
 
-      signOut: async () => {},
+      signOut: async () => {
+        // console.log("log-out");
+        // setAuthStatus("authenticated");
+      },
     });
   }, [setAuthStatus]);
 

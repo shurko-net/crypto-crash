@@ -84,7 +84,7 @@ export const AddressInfoDropdown = ({ address, ensAvatar, displayName }: Address
             type="button"
             onClick={() => {
               disconnect();
-              setAuthStatus("unauthenticated");
+              setAuthStatus("authenticated");
               setIsModalOpen(false);
             }}
           >

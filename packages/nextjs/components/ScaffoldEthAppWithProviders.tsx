@@ -79,7 +79,7 @@ export const ScaffoldEthAppWithProviders = ({ children }: { children: React.Reac
       }
 
       fetchingStatusRef.current = true;
-
+      setAuthStatus("loading");
       try {
         const data = await authApi.getMe();
         const jwtOk = !!data.address;
@@ -147,9 +147,7 @@ export const ScaffoldEthAppWithProviders = ({ children }: { children: React.Reac
         }
       },
 
-      signOut: async () => {
-        setAuthStatus("unauthenticated");
-      },
+      signOut: async () => {},
     });
   }, [setAuthStatus]);
 

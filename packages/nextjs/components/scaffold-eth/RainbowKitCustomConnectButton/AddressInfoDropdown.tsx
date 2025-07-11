@@ -7,6 +7,7 @@ import { ArrowRightEndOnRectangleIcon, CheckCircleIcon, DocumentDuplicateIcon } 
 import { BlockieAvatar } from "~~/components/BlockieAvatar";
 import { Modal } from "~~/components/Modal";
 import { useOutsideClick } from "~~/hooks/scaffold-eth";
+import { useGlobalState } from "~~/services/store/store";
 
 type AddressInfoDropdownProps = {
   address: Address;
@@ -18,6 +19,7 @@ type AddressInfoDropdownProps = {
 export const AddressInfoDropdown = ({ address, ensAvatar, displayName }: AddressInfoDropdownProps) => {
   const { disconnect } = useDisconnect();
   const checkSumAddress = getAddress(address);
+  const setAuthStatus = useGlobalState(({ setAuthStatus }) => setAuthStatus);
 
   const [addressCopied, setAddressCopied] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -82,6 +84,7 @@ export const AddressInfoDropdown = ({ address, ensAvatar, displayName }: Address
             type="button"
             onClick={() => {
               disconnect();
+              setAuthStatus("unauthenticated");
               setIsModalOpen(false);
             }}
           >

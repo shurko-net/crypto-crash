@@ -12,7 +12,7 @@ import { getBlockExplorerAddressLink } from "~~/utils/scaffold-eth";
 export const RainbowKitCustomConnectButton = () => {
   const { targetNetwork } = useTargetNetwork();
   const authStatus = useGlobalState(({ authStatus }) => authStatus);
-
+  console.log("authStatus", authStatus);
   return (
     <ConnectButton.Custom>
       {({ account, chain, openConnectModal, mounted }) => {
@@ -24,7 +24,7 @@ export const RainbowKitCustomConnectButton = () => {
         return (
           <>
             {(() => {
-              if (authStatus === "loading") {
+              if (authStatus === "loading" || !mounted) {
                 return (
                   <button
                     className="button !py-[0.5rem] !px-[0.75rem] text-[0.75rem] !border-[0.125rem] lg:!px-7 lg:!py-3 lg:!border-[0.3125rem] lg:!text-[1rem] leading-3"

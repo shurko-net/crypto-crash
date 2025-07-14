@@ -9,7 +9,7 @@ import {
 } from "~~/services/signalr/GameHub";
 import { BetSide } from "~~/types/betting";
 
-export const useGameHub = () => {
+export const useGameHub = (isAuthenticated: string) => {
   const [shortCarX, setShortCarX] = useState<number | null>(null);
   const [longCarX, setLongCarX] = useState<number | null>(null);
   const [timer, setTimer] = useState<number | null>(null);
@@ -30,8 +30,11 @@ export const useGameHub = () => {
     bank === null || isBettingOpen === null || isGameStarted === null || playerBets === null || gameId === null;
 
   useEffect(() => {
+    let isMounted = true;
     const setupConnection = async () => {
       try {
+        await gameHubService.disconnect?.();
+
         await gameHubService.connect({
           onRaceTick: handleRaceTick,
           onBettingState: handleBettingState,
@@ -43,13 +46,19 @@ export const useGameHub = () => {
         });
       } catch (error) {
         console.error("Error connecting to GameHub:", error);
+        if (isMounted) {
+          setConnectionError(error as Error);
+        }
       }
     };
 
     setupConnection();
 
-    return () => {};
-  }, []);
+    return () => {
+      isMounted = false;
+      gameHubService.disconnect?.();
+    };
+  }, [isAuthenticated]);
 
   const handleRaceTick = useCallback((data: RaceTickData) => {
     const longXValue = parseFloat(data.longX);

@@ -21,8 +21,7 @@ export const RainbowKitCustomConnectButton = () => {
           : undefined;
 
         const connected = mounted && account && chain;
-        console.log("account", account);
-        console.log("authStatus", authStatus);
+
         if (authStatus === "loading") {
           return (
             <button
@@ -35,15 +34,27 @@ export const RainbowKitCustomConnectButton = () => {
         }
 
         if (authStatus === "unauthenticated") {
-          return (
-            <button
-              className="button !py-[0.6875rem] !px-[1.7441rem] text-[0.75rem] !border-[0.125rem] lg:!px-[3.0756rem] lg:!py-[1.125rem] lg:!border-[0.3125rem] lg:!text-[1rem] leading-3"
-              onClick={openConnectModal}
-              type="button"
-            >
-              Sign in
-            </button>
-          );
+          if (connected) {
+            return (
+              <button
+                className="button !py-[0.6875rem] !px-[1.7441rem] text-[0.75rem] !border-[0.125rem] lg:!px-[3.0756rem] lg:!py-[1.125rem] lg:!border-[0.3125rem] lg:!text-[1rem] leading-3"
+                onClick={openConnectModal}
+                type="button"
+              >
+                Sign in
+              </button>
+            );
+          } else {
+            return (
+              <button
+                className="button !py-[0.6875rem] !px-[1.7441rem] text-[0.75rem] !border-[0.125rem] lg:!px-[3.0756rem] lg:!py-[1.125rem] lg:!border-[0.3125rem] lg:!text-[1rem] leading-3"
+                onClick={openConnectModal}
+                type="button"
+              >
+                Connect
+              </button>
+            );
+          }
         }
 
         if (authStatus === "authenticated" && !connected) {

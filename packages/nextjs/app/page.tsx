@@ -7,10 +7,12 @@ import PlayerBets from "~~/components/race-betting/PlayerBets";
 import CarRace from "~~/components/race-betting/car-race/CarRace";
 import Side from "~~/components/race-betting/side/Side";
 import { useGameHub } from "~~/hooks/signalr/useGameHub";
+import { useGlobalState } from "~~/services/store/store";
 import { GameResult } from "~~/types/betting";
 
 const Home: NextPage = () => {
   const [gameStatus, setGameStatus] = useState("");
+  const authStatus = useGlobalState(({ authStatus }) => authStatus);
 
   const {
     shortCarX,
@@ -28,7 +30,7 @@ const Home: NextPage = () => {
     isWinnerDisplay,
     resultBets,
     connectionError,
-  } = useGameHub();
+  } = useGameHub(authStatus);
 
   useEffect(() => {
     if (isWinnerDisplay) {

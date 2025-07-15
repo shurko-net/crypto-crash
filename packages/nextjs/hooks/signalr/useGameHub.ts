@@ -52,11 +52,20 @@ export const useGameHub = (isAuthenticated: string) => {
       }
     };
 
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        setupConnection();
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
     setupConnection();
 
     return () => {
       isMounted = false;
       gameHubService.disconnect?.();
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
   }, [isAuthenticated]);
 

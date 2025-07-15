@@ -33,8 +33,6 @@ export const useGameHub = (isAuthenticated: string) => {
     let isMounted = true;
     const setupConnection = async () => {
       try {
-        await gameHubService.disconnect?.();
-
         await gameHubService.connect({
           onRaceTick: handleRaceTick,
           onBettingState: handleBettingState,
@@ -52,6 +50,8 @@ export const useGameHub = (isAuthenticated: string) => {
       }
     };
 
+    setupConnection();
+
     const handleVisibilityChange = () => {
       if (document.visibilityState === "visible") {
         setupConnection();
@@ -60,11 +60,9 @@ export const useGameHub = (isAuthenticated: string) => {
 
     document.addEventListener("visibilitychange", handleVisibilityChange);
 
-    setupConnection();
-
     return () => {
       isMounted = false;
-      gameHubService.disconnect?.();
+
       document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
   }, [isAuthenticated]);

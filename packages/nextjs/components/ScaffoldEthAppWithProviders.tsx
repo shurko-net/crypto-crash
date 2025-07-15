@@ -46,7 +46,6 @@ const ScaffoldEthApp = ({ children }: ScaffoldEthAppProps) => {
         } else {
           await authApi.logout();
           setAuthStatus("unauthenticated");
-          console.log("JWT invalid, logout");
         }
       } catch (e) {
         console.error(e);
@@ -124,10 +123,7 @@ export const ScaffoldEthAppWithProviders = ({ children }: { children: React.Reac
         }
       },
 
-      signOut: async () => {
-        // console.log("log-out");
-        // setAuthStatus("authenticated");
-      },
+      signOut: async () => {},
     });
   }, [setAuthStatus]);
 

@@ -30,9 +30,13 @@ export const useGameHub = (isAuthenticated: string) => {
     bank === null || isBettingOpen === null || isGameStarted === null || playerBets === null || gameId === null;
 
   useEffect(() => {
-    let isMounted = true;
+    // if (didSetupRef.current) return;
+    if (isAuthenticated === "loading") return;
+
     const setupConnection = async () => {
       try {
+        await gameHubService.disconnect();
+        console.log("Connected to websocket");
         await gameHubService.connect({
           onRaceTick: handleRaceTick,
           onBettingState: handleBettingState,
@@ -43,27 +47,29 @@ export const useGameHub = (isAuthenticated: string) => {
           onBets: handleBets,
         });
       } catch (error) {
-        console.error("Error connecting to GameHub:", error);
-        if (isMounted) {
-          setConnectionError(error as Error);
-        }
+        console.error("Error connecting to GameHub (public):", error);
       }
     };
 
     setupConnection();
 
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === "visible") {
-        setupConnection();
-      }
-    };
+    // const handleVisibilityChange = () => {
+    //   if (document.visibilityState === "visible") {
+    //     if (isAuthenticated === "authenticated") {
+    //       setupConnection();
+    //       didSetupRef.current = true;
+    //     } else {
+    //       setupConnection();
+    //       didSetupRef.current = true;
+    //     }
+    //   }
+    // };
 
-    document.addEventListener("visibilitychange", handleVisibilityChange);
+    // document.addEventListener("visibilitychange", handleVisibilityChange);
 
     return () => {
-      isMounted = false;
-
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      gameHubService.disconnect();
+      // document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
   }, [isAuthenticated]);
 
@@ -127,6 +133,10 @@ export const useGameHub = (isAuthenticated: string) => {
 
   const placeBet = useCallback(async (gameId: string, amount: number, side: BetSide, txHash: string): Promise<void> => {
     try {
+      // console.log("gameId: ", gameId);
+      // console.log("betAmount: ", amount);
+      // console.log("betSide: ", side);
+      // console.log("txHash: ", txHash);
       await gameHubService.placeBet(gameId, amount, side, txHash);
     } catch (error) {
       console.error("Error placing bet:", error);

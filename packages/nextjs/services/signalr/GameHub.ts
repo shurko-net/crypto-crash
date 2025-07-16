@@ -1,4 +1,4 @@
-import { HubConnection, HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
+import { HubConnection, HubConnectionBuilder } from "@microsoft/signalr";
 import { BetSide } from "~~/types/betting";
 
 export interface RaceTickData {
@@ -33,12 +33,6 @@ export interface GameResultData extends GameStateData {
   bets: Bets;
 }
 
-export interface BetResultPayload {
-  betResult: "win" | "lose";
-  isBettingOpen: boolean;
-  isGameStarted: boolean;
-}
-
 export interface BetsData {
   bank: number;
   bets: {
@@ -61,6 +55,7 @@ class GameHubService {
   private eventHandlers: GameHubEventHandlers = {};
   private hubUrl = process.env.NEXT_PUBLIC_HUB_URL!;
   private isConnecting = false;
+  private isManualDisconnect = false; // ✅ Новый флаг
 
   public async connect(handlers: GameHubEventHandlers): Promise<void> {
     if (this.connection || this.isConnecting) {
@@ -73,7 +68,7 @@ class GameHubService {
     try {
       this.connection = new HubConnectionBuilder()
         .withUrl(this.hubUrl, { timeout: 30000 })
-        .configureLogging(LogLevel.Debug)
+        // .configureLogging(LogLevel.Debug)
         .withAutomaticReconnect({
           nextRetryDelayInMilliseconds: retryContext => {
             if (retryContext.previousRetryCount >= 5) {
@@ -109,13 +104,14 @@ class GameHubService {
     this.connection.onclose(error => {
       console.error("[GameHub] Connection closed permanently:", error);
 
-      if (this.eventHandlers.onConnectionError) {
+      if (!this.isManualDisconnect && this.eventHandlers.onConnectionError) {
         this.eventHandlers.onConnectionError(
           new Error("Could not connect to the server. Check your internet connection or try again later."),
         );
       }
 
       this.connection = null;
+      this.isManualDisconnect = false; // ✅ Всегда сбрасываем после закрытия
     });
   }
 
@@ -165,16 +161,22 @@ class GameHubService {
 
   public async disconnect(): Promise<void> {
     if (!this.connection) {
+      console.log("[GameHub] No active connection to disconnect.");
       return;
     }
+
+    console.log("[GameHub] Disconnecting, current state:", this.connection.state);
+    this.isManualDisconnect = true;
+
     try {
-      if (this.connection.state !== "Connecting") {
-        await this.connection.stop();
-      }
+      await this.connection.stop();
+      console.log("[GameHub] Connection stopped successfully.");
     } catch (error) {
-      console.error("Error disconnecting from GameHub:", error);
+      console.error("[GameHub] Error disconnecting from GameHub:", error);
     } finally {
       this.connection = null;
+      this.isConnecting = false;
+      console.log("[GameHub] Connection reset, ready for new connection.");
     }
   }
 }

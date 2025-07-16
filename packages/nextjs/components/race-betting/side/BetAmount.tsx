@@ -59,6 +59,10 @@ export default function BetAmount({ authStatus, isBettingOpen, placeBet, address
       });
 
       if (!gameId) return;
+      console.log("gameId: ", gameId);
+      console.log("betAmount: ", Number(betAmount));
+      console.log("betSide: ", betSide);
+      console.log("txHash: ", txHash);
 
       await placeBet(gameId, Number(betAmount), betSide, txHash as `0x${string}`);
       setBetAmount("");

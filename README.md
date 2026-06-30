@@ -60,6 +60,7 @@ Bets are placed through a Solidity contract on Monad testnet. The frontend subsc
 | State       | Zustand |
 | Real-time   | SignalR |
 | Animation   | Framer Motion |
+| Backend     | .NET / C# (see [backend repo](https://github.com/DmitryDatsko/crypto-crush)) |
 | Contracts   | Solidity (see [contracts repo](https://github.com/DmitryDatsko/crypto-crash-contract)) |
 
 ---
